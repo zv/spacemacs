@@ -276,8 +276,6 @@ the following keys:
     ;; install and initialize packages and extensions
     (configuration-layer//initialize-extensions configuration-layer-all-pre-extensions-sorted t)
     (configuration-layer//install-packages)
-    (when dotspacemacs-loading-progress-bar
-      (spacemacs/append-to-buffer spacemacs-loading-text))
     (configuration-layer//initialize-packages)
     (configuration-layer//initialize-extensions configuration-layer-all-post-extensions-sorted)
     ;; restore warning level before initialization
@@ -762,9 +760,6 @@ deleted safely."
     ;; (message "orphans: %s" orphans)
     (if orphans
         (progn
-          ;; for the loading dot bar
-          (when dotspacemacs-loading-progress-bar
-            (spacemacs/append-to-buffer "OK!\n"))
           (spacemacs/append-to-buffer
            (format "Found %s orphan package(s) to delete...\n"
                    orphans-count))
