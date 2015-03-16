@@ -1,3 +1,13 @@
+;;; keybindings.el --- zv contrib key-bindings File
+;;
+;; Copyright (c) 2012-2014 Zephyr Pellerin
+;;
+;; Author: zv <zv@nxvr.org>
+;; URL: https://github.com/zv/spacemacs
+;;
+;;; License: GPLv3
+
+
 ;; ---------------------------------------------------------------------------
 ;; Prefixes
 ;; ---------------------------------------------------------------------------
@@ -6,8 +16,10 @@
 
 (add-to-list 'spacemacs/key-binding-prefixes '("ar" . "applications-repl"))
 
+;; ---------------------------------------------------------------------------
 ;; global bindings
 ;; ---------------------------------------------------------------------------
+
 ;; tab/window split manipulation]
 (define-key evil-normal-state-map "Q" 'evil-quit)
 (global-set-key next-buffer-key 'evil-window-next)
@@ -164,7 +176,7 @@
 
 (zv//initial-path-keybinding `(("fea" . "~/Development/quad/newadmin")
                                ("feq" . "~/Development/quad")
-                               ("fez" . "~/.emacs.d/contrib/zv/")
+                               ("fez" . "~/.emacs.d/contrib/usr/zv/")
                                ("feg" . "~/.gnus.el")
                                ("fzd" . "~/Development/dotfilez")
                                ("fer" . "~/.emacs.d/.ercrc.el")
