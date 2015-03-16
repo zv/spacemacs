@@ -2245,9 +2245,10 @@ displayed in the mode-line.")
 
       (defun spacemacs//set-powerline-for-startup-buffers ()
         "Set the powerline for buffers created when Emacs starts."
-        (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
-          (when (get-buffer buffer)
-            (spacemacs//restore-powerline buffer))))
+        (unless configuration-layer-error-count
+          (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
+            (when (get-buffer buffer)
+              (spacemacs//restore-powerline buffer)))))
       (add-hook 'after-init-hook
                 'spacemacs//set-powerline-for-startup-buffers))))
 
@@ -2480,7 +2481,8 @@ displayed in the mode-line.")
 (defun spacemacs/init-window-numbering ()
   (use-package window-numbering
     ;; not deferred on puprose
-    :init
+    :init (require 'window-numbering)
+    :config
     (progn
       (when (configuration-layer/package-declaredp 'powerline)
         (defun window-numbering-install-mode-line (&optional position)
