@@ -117,96 +117,98 @@
     (progn
       (setq org-log-done t)
       (add-hook 'org-mode-hook 'org-indent-mode)
-      :config
-      (progn
-        (setq org-default-notes-file (org-path "notes.org"))
 
-        ;; Configure evil keybindings
-        (eval-after-load 'org
-          '(zv/configure-org-evil-bindings))
 
-        ;; Automatically colorize source code results
-        (setq org-src-fontify-natively t)
-        ;; Refile settings ------------------------------------
-        ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-        ;; Use full outline paths for refile targets - we file directly with IDO
-        (setq org-refile-use-outline-path nil)
-        (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3))))
+      (setq org-default-notes-file (org-path "notes.org"))
 
-        ;; Agenda Mode ----------------------------------------
-        ;; Set span of time agenda describes
-        (setq org-agenda-span 'day)
+      ;; Configure evil keybindings
+      (eval-after-load 'org
+        '(zv/configure-org-evil-bindings))
 
-        ;; Clocking ------------------------------------------
-        ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
-        (setq org-clock-history-length 23)
-        ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
-        (setq org-clock-out-remove-zero-time-clocks t)
+      ;; Automatically colorize source code results
+      (setq org-src-fontify-natively t)
+      ;; Refile settings ------------------------------------
+      ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+      ;; Use full outline paths for refile targets - we file directly with IDO
+      (setq org-refile-use-outline-path nil)
+      (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3))))
 
-        ;; Todo Mode configuration
-        (setq org-todo-keywords
-              (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                      (sequence "WAITING(w@/!)" "FEEDBACK(f@/1)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING"))))
+      ;; Agenda Mode ----------------------------------------
+      ;; Set span of time agenda describes
+      (setq org-agenda-span 'day)
 
-        (setq org-todo-keyword-faces
-              (quote (("TODO"      :foreground "red"          :weight bold)
-                      ("NEXT"      :foreground "blue"         :weight bold)
-                      ("DONE"      :foreground "forest green" :weight bold)
-                      ("WAITING"   :foreground "orange"       :weight bold)
-                      ("HOLD"      :foreground "magenta"      :weight bold)
-                      ("CANCELLED" :foreground "forest green" :weight bold)
-                      ("MEETING"   :foreground "forest green" :weight bold))))
+      ;; Clocking ------------------------------------------
+      ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
+      (setq org-clock-history-length 23)
+      ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+      (setq org-clock-out-remove-zero-time-clocks t)
 
-        ;; Fast todo selection allows changing from any task todo state to
-        ;; any other state directly by selecting the appropriate key from
-        ;; the fast todo selection key menu. This is a great feature!
-        (setq org-use-fast-todo-selection t)
+      ;; Todo Mode configuration
+      (setq org-todo-keywords
+            (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                    (sequence "WAITING(w@/!)" "FEEDBACK(f@/1)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING"))))
 
-        ;; allows changing todo states with S-left and S-right skipping all
-        ;; of the normal processing when entering or leaving a todo
-        ;; state. This cycles through the todo states but skips setting
-        ;; timestamps and entering notes which is very convenient when all
-        ;; you want to do is fix up the status of an entry.
-        (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+      (setq org-todo-keyword-faces
+            (quote (("TODO"      :foreground "red"          :weight bold)
+                    ("NEXT"      :foreground "blue"         :weight bold)
+                    ("DONE"      :foreground "forest green" :weight bold)
+                    ("WAITING"   :foreground "orange"       :weight bold)
+                    ("HOLD"      :foreground "magenta"      :weight bold)
+                    ("CANCELLED" :foreground "forest green" :weight bold)
+                    ("MEETING"   :foreground "forest green" :weight bold))))
 
-        ;; My tag state triggers
-        (setq org-todo-state-tags-triggers
-              (quote (("CANCELLED" ("CANCELLED" . t))
-                      ("WAITING" ("WAITING" . t))
-                      ("HOLD" ("WAITING") ("HOLD" . t))
-                      (done ("WAITING") ("HOLD"))
-                      ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                      ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                      ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+      ;; Fast todo selection allows changing from any task todo state to
+      ;; any other state directly by selecting the appropriate key from
+      ;; the fast todo selection key menu. This is a great feature!
+      (setq org-use-fast-todo-selection t)
 
-        ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-        (setq org-capture-templates
-              (quote
-               (("t" "todo"         entry (file (org-path "gtd.org"))            "* TODO %?\n%U\n%a\n")
-                ("n" "note"         entry (file (org-path "notes.org"))          "* %? :NOTE:\n%U\n%a\n")
-                ("c" "conversation" entry (file (org-path "conversation.org"))   "* CONVERSATION %? :PHONE:\n%U")
-                ("i" "ideas"        entry (file (org-path "ideas.org"))          "* %?\n%U")
-                ("q" "quotes"       item  (file (org-path "quotes.org"))         "%?\n%U")
-                ("j" "journal"      entry (file+datetree (org-path "diary.org")) "* %?\n%U\n")
-                )))
+      ;; allows changing todo states with S-left and S-right skipping all
+      ;; of the normal processing when entering or leaving a todo
+      ;; state. This cycles through the todo states but skips setting
+      ;; timestamps and entering notes which is very convenient when all
+      ;; you want to do is fix up the status of an entry.
+      (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
-        ;; Org graphics
-        (setq org-ditaa-jar-path "~/.emacs.d/contrib/zv/extensions/org/contrib/scripts/ditaa.jar")
-        (org-babel-do-load-languages
-         (quote org-babel-load-languages)
-         (quote ((emacs-lisp . t)
-                 (dot        . t)
-                 (ditaa      . t)
-                 (R          . t)
-                 (python     . t)
-                 (ruby       . t)
-                 (gnuplot    . t)
-                 (clojure    . t)
-                 (sh         . t)
-                 (ledger     . t)
-                 (org        . t)
-                 (plantuml   . t)
-                 (latex      . t))))))))
+      ;; My tag state triggers
+      (setq org-todo-state-tags-triggers
+            (quote (("CANCELLED" ("CANCELLED" . t))
+                    ("WAITING" ("WAITING" . t))
+                    ("HOLD" ("WAITING") ("HOLD" . t))
+                    (done ("WAITING") ("HOLD"))
+                    ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                    ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                    ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+      ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+      (setq org-capture-templates
+            (quote
+             (("t" "todo"         entry (file (org-path "gtd.org"))            "* TODO %?\n%U\n%a\n")
+              ("n" "note"         entry (file (org-path "notes.org"))          "* %? :NOTE:\n%U\n%a\n")
+              ("c" "conversation" entry (file (org-path "conversation.org"))   "* CONVERSATION %? :PHONE:\n%U")
+              ("i" "ideas"        entry (file (org-path "ideas.org"))          "* %?\n%U")
+              ("q" "quotes"       item  (file (org-path "quotes.org"))         "%?\n%U")
+              ("j" "journal"      entry (file+datetree (org-path "diary.org")) "* %?\n%U\n")
+              )))
+
+      ;; Org graphics
+      (setq org-ditaa-jar-path
+            (expand-file-name (concat zv-configuration-layer-directory
+                                      "/extensions/org/contrib/scripts/ditaa.jar")))
+      (org-babel-do-load-languages
+       (quote org-babel-load-languages)
+       (quote ((emacs-lisp . t)
+               (dot        . t)
+               (ditaa      . t)
+               (R          . t)
+               (python     . t)
+               (ruby       . t)
+               (gnuplot    . t)
+               (clojure    . t)
+               (sh         . t)
+               (ledger     . t)
+               (org        . t)
+               (plantuml   . t)
+               (latex      . t)))))))
 
 (defun zv/init-clojure-mode ()
   (use-package clojure

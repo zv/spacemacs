@@ -176,7 +176,7 @@
 
 (zv//initial-path-keybinding `(("fea" . "~/Development/quad/newadmin")
                                ("feq" . "~/Development/quad")
-                               ("fez" . "~/.emacs.d/contrib/usr/zv/")
+                               ("fez" . ,zv-configuration-layer-directory)
                                ("feg" . "~/.gnus.el")
                                ("fzd" . "~/Development/dotfilez")
                                ("fer" . "~/.emacs.d/.ercrc.el")
