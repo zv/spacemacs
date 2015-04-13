@@ -2,7 +2,7 @@
 ;; Configuration Layer Parameters
 ;;---------------------------------------------------------------------
 (defconst zv-configuration-layer-directory
-  (expand-file-name (concat configuration-layer-contrib-directory "usr/zv"))
+  (expand-file-name (concat configuration-layer-contrib-directory "usr/zv/"))
   "zv contribution layer base directory.")
 
 (setq spacemacs-repository "emacs.d")

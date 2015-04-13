@@ -20,6 +20,10 @@
 ;; global bindings
 ;; ---------------------------------------------------------------------------
 
+;; Forward/Backward mice keys
+(global-set-key (kbd "<mouse-8>") 'switch-to-prev-buffer)
+(global-set-key (kbd "<mouse-9>") 'switch-to-next-buffer)
+
 ;; tab/window split manipulation]
 (define-key evil-normal-state-map "Q" 'evil-quit)
 (global-set-key next-buffer-key 'evil-window-next)
@@ -87,8 +91,8 @@
 ;; Although this is `helm' package configuration, this is more
 ;; accurately a keybinding for a very, very commonly used function
 (use-package helm
-  :idle
-  :config
+  :defer t
+  :init
   ;; I literally have never used the default `jj' keybinding.
   ;; Good riddance
   (evil-leader/set-key "jj" 'helm-mini))

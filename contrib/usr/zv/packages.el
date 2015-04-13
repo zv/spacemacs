@@ -210,53 +210,6 @@
                (plantuml   . t)
                (latex      . t)))))))
 
-(defun zv/init-clojure-mode ()
-  (use-package clojure
-    :defer t
-    :idle t
-    :idle-priority 5
-    :init
-    (progn
-      (evil-leader/set-key-for-mode 'clojure-mode
-        "ml" 'evil-lisp-state
-        "mz" 'cider-switch-to-repl-buffer
-        "mcj" 'cider-jack-in
-        "mcc" 'cider-connect
-        "mcq" 'cider-quit
-        "mck" 'cider-load-buffer
-        "mcl" 'cider-load-file
-        "mcn" 'cider-repl-set-ns
-        "mdd" 'cider-doc
-        "mdg" 'cider-grimoire
-        "mda" 'cider-apropos
-        "mgv" 'cider-jump-to-var
-        "mgr" 'cider-jump-to-resource
-        "mge" 'cider-jump-to-compilation-error
-        "mgs" 'cider-jump
-        "mtt" 'cider-test-run-tests))))
-
-(defun zv/init-cider ()
-  (use-package cider
-    :defer t
-    :idle t
-    :idle-priority 5
-    :init
-    (progn
-      (defun cider-repl-mode-defaults ()
-        (smartparens-strict-mode +1)
-        (rainbow-delimiters-mode +1)
-        (whitespace-mode -1))
-
-      (setq nrepl-log-messages t)
-      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-      (add-hook 'cider-repl-mode-hook 'cider-repl-mode-defaults)
-
-
-      (evil-leader/set-key-for-mode 'cider-repl-mode
-        "ml" 'evil-lisp-state
-        "mz" 'cider-switch-to-last-clojure-buffer
-        "mcq" 'cider-quit))))
-
 (defun zv/configure-org-evil-bindings ()
     ;; Ensure we can still use M-j/M-k to move windows
   (evil-define-key 'motion org-mode-map
