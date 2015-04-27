@@ -8,7 +8,6 @@
 (setq spacemacs-repository "emacs.d")
 (setq spacemacs-repository-owner "zv")
 
-
 (setq-default
  ;; Org Mode
  org-directory (expand-file-name "~/org")

@@ -229,8 +229,6 @@
 
 (eval-after-load 'company
   '(progn
-     (define-key company-active-map (kbd "C-j") 'company-select-next)
-     (define-key company-active-map (kbd "C-k") 'company-select-previous)
      ;; Don't forget C-s (search candidates)
      (global-set-key (kbd "<backtab>") 'company-complete)))
 

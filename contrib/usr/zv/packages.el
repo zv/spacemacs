@@ -4,11 +4,7 @@
                       org
                       ;; ggtags
                       ;; helm-gtags
-                      ;; Typescript
-                      ;; tss
-                      ;;;; angular-snippets
-                      jade-mode
-                      ))
+                      jade-mode))
 
 (defvar zv-excluded-packages '())
 
@@ -117,16 +113,13 @@
     (progn
       (setq org-log-done t)
       (add-hook 'org-mode-hook 'org-indent-mode)
-
-
       (setq org-default-notes-file (org-path "notes.org"))
-
       ;; Configure evil keybindings
-      (eval-after-load 'org
-        '(zv/configure-org-evil-bindings))
+      (eval-after-load 'org '(zv/configure-org-evil-bindings))
 
       ;; Automatically colorize source code results
       (setq org-src-fontify-natively t)
+
       ;; Refile settings ------------------------------------
       ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
       ;; Use full outline paths for refile targets - we file directly with IDO
@@ -140,44 +133,10 @@
       ;; Clocking ------------------------------------------
       ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
       (setq org-clock-history-length 23)
-      ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+
+      ;; Sometimes I change tasks I'm clocking quickly - this removes clocked
+      ;; tasks with 0:00 duration
       (setq org-clock-out-remove-zero-time-clocks t)
-
-      ;; Todo Mode configuration
-      (setq org-todo-keywords
-            (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                    (sequence "WAITING(w@/!)" "FEEDBACK(f@/1)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING"))))
-
-      (setq org-todo-keyword-faces
-            (quote (("TODO"      :foreground "red"          :weight bold)
-                    ("NEXT"      :foreground "blue"         :weight bold)
-                    ("DONE"      :foreground "forest green" :weight bold)
-                    ("WAITING"   :foreground "orange"       :weight bold)
-                    ("HOLD"      :foreground "magenta"      :weight bold)
-                    ("CANCELLED" :foreground "forest green" :weight bold)
-                    ("MEETING"   :foreground "forest green" :weight bold))))
-
-      ;; Fast todo selection allows changing from any task todo state to
-      ;; any other state directly by selecting the appropriate key from
-      ;; the fast todo selection key menu. This is a great feature!
-      (setq org-use-fast-todo-selection t)
-
-      ;; allows changing todo states with S-left and S-right skipping all
-      ;; of the normal processing when entering or leaving a todo
-      ;; state. This cycles through the todo states but skips setting
-      ;; timestamps and entering notes which is very convenient when all
-      ;; you want to do is fix up the status of an entry.
-      (setq org-treat-S-cursor-todo-selection-as-state-change nil)
-
-      ;; My tag state triggers
-      (setq org-todo-state-tags-triggers
-            (quote (("CANCELLED" ("CANCELLED" . t))
-                    ("WAITING" ("WAITING" . t))
-                    ("HOLD" ("WAITING") ("HOLD" . t))
-                    (done ("WAITING") ("HOLD"))
-                    ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                    ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                    ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
       ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
       (setq org-capture-templates
