@@ -1,10 +1,16 @@
-(defvar zv-packages '(bbdb
-                      erc-hl-nicks
-                      nodejs-repl
-                      org
+(defvar zv-packages '(
                       ;; ggtags
                       ;; helm-gtags
-                      jade-mode))
+                      bbdb
+                      erc-hl-nicks
+                      evil-org
+                      jade-mode
+                      nodejs-repl
+                      org
+                      org-bullets
+                      org-pomodoro
+                      org-repo-todo
+                      ))
 
 (defvar zv-excluded-packages '())
 
@@ -75,153 +81,66 @@
       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
       (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack))))
 
- ;; jade-mode ------------------------------------------------------------------
 (defun zv/init-jade-mode ()
   (use-package jade-mode
     :mode "\\.jade$"))
 
-;; Include typescript mode
-(defun zv/init-tss ()
-  (use-package tss
-    :mode ("\\.tsc$" . tss-mode)))
+(defun zv/init-evil-org ()
+  (use-package evil-org
+    :commands evil-org-mode
+    :init
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    :config
+    (progn
+      (evil-leader/set-key-for-mode 'org-mode
+           "a" nil "ma" 'org-agenda
+           "c" nil "mA" 'org-archive-subtree
+           "o" nil "mC" 'evil-org-recompute-clocks
+           "l" nil "ml" 'evil-org-open-links
+           "t" nil "mt" 'org-show-todo-tree)
+      (spacemacs|diminish evil-org-mode " ⓔ" " e"))))
 
-;; Include typescript mode
-(defun zv/init-angular-snippets () (use-package angular-snippets))
-
-(defun zv/init-rust-mode ()
-  (use-package rust-mode
-    :commands rust-mode
-    :mode "\\.rs$'"
-    :interpreter "rustc"))
-
-;; Org Mode
-(defun zv/init-org ()
-  (use-package org
-    :mode ("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode)
+(defun zv/init-org-bullets ()
+  (use-package org-bullets
     :defer t
-    ;; Global Keybindings
-    :bind (("<f12>"   . org-agenda)
-           ("<f8>"    . org-cycle-agenda-files)
-           ("<f9> b"  . bbdb)
-           ("<f9> c"  . calendar)
-           ("<f9> l"  . org-toggle-link-display)
-           ("M-<f9>"  . org-toggle-inline-images)
-           ("<f11>"   . org-clock-goto)
-           ("C-<f11>" . org-clock-in)
-           ("C-c c"   . org-capture))
+    :init (add-hook 'org-mode-hook 'org-bullets-mode)))
+
+(defun zv/init-org-pomodoro ()
+  (use-package org-pomodoro
+    :defer t
     :init
     (progn
-      (setq org-log-done t)
-      (add-hook 'org-mode-hook 'org-indent-mode)
-      (setq org-default-notes-file (org-path "notes.org"))
-      ;; Configure evil keybindings
-      (eval-after-load 'org '(zv/configure-org-evil-bindings))
+      (when (system-is-mac)
+        (setq org-pomodoro-audio-player "/usr/bin/afplay"))
+      (evil-leader/set-key-for-mode 'org-mode
+        "mp" 'org-pomodoro))))
 
-      ;; Automatically colorize source code results
-      (setq org-src-fontify-natively t)
+(defun zv/init-org-repo-todo ()
+  (use-package org-repo-todo
+    :commands (ort/capture-todo
+               ort/capture-todo-check
+               ort/goto-todos)
+    :init
+    (progn
+      (evil-leader/set-key
+        "Ct"  'ort/capture-todo
+        "CT"  'ort/capture-todo-check)
+      (evil-leader/set-key-for-mode 'org-mode
+        "mgt" 'ort/goto-todos))))
 
-      ;; Refile settings ------------------------------------
-      ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-      ;; Use full outline paths for refile targets - we file directly with IDO
-      (setq org-refile-use-outline-path nil)
-      (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3))))
 
-      ;; Agenda Mode ----------------------------------------
-      ;; Set span of time agenda describes
-      (setq org-agenda-span 'day)
 
-      ;; Clocking ------------------------------------------
-      ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
-      (setq org-clock-history-length 23)
+(defun zv/init-org-mime ()
+  (use-package org-mime
+    :load-path "/home/zv/.emacs.d/contrib/usr/zv/extensions/org/lisp"
+    :init
+    (progn
+      (setq org-mime-library 'mml)
+      ;; A configuration setting that can not go unconfigured for org-mime
+      (setq org-list-allow-alphabetical nil)
+      ;; Don't include table of contents
+      (setq org-export-with-toc nil)
+      ;; Don't include section numbers with our headings
+      (setq org-export-with-section-numbers nil)
+      (evil-leader/set-key-for-mode 'message-mode "mpo" 'org-mime-htmlize))))
 
-      ;; Sometimes I change tasks I'm clocking quickly - this removes clocked
-      ;; tasks with 0:00 duration
-      (setq org-clock-out-remove-zero-time-clocks t)
-
-      ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-      (setq org-capture-templates
-            (quote
-             (("t" "todo"         entry (file (org-path "gtd.org"))            "* TODO %?\n%U\n%a\n")
-              ("n" "note"         entry (file (org-path "notes.org"))          "* %? :NOTE:\n%U\n%a\n")
-              ("c" "conversation" entry (file (org-path "conversation.org"))   "* CONVERSATION %? :PHONE:\n%U")
-              ("i" "ideas"        entry (file (org-path "ideas.org"))          "* %?\n%U")
-              ("q" "quotes"       item  (file (org-path "quotes.org"))         "%?\n%U")
-              ("j" "journal"      entry (file+datetree (org-path "diary.org")) "* %?\n%U\n")
-              )))
-
-      ;; Org graphics
-      (setq org-ditaa-jar-path
-            (expand-file-name (concat zv-configuration-layer-directory
-                                      "/extensions/org/contrib/scripts/ditaa.jar")))
-      (org-babel-do-load-languages
-       (quote org-babel-load-languages)
-       (quote ((emacs-lisp . t)
-               (dot        . t)
-               (ditaa      . t)
-               (R          . t)
-               (python     . t)
-               (ruby       . t)
-               (gnuplot    . t)
-               (clojure    . t)
-               (sh         . t)
-               (ledger     . t)
-               (org        . t)
-               (plantuml   . t)
-               (latex      . t)))))))
-
-(defun zv/configure-org-evil-bindings ()
-    ;; Ensure we can still use M-j/M-k to move windows
-  (evil-define-key 'motion org-mode-map
-    next-buffer-key 'evil-window-next
-    prev-buffer-key 'evil-window-prev)
-
-    ;; normal state shortcuts
-    (evil-define-key 'normal org-mode-map
-      "gh" 'outline-up-heading
-      ;; to be backward compatible with older org version
-      "gj" (if (fboundp 'org-forward-same-level)
-               'org-forward-same-level
-             'org-forward-heading-same-level)
-      "gk" (if (fboundp 'org-backward-same-level)
-               'org-backward-same-level
-             'org-backward-heading-same-level)
-      "gl" 'outline-next-visible-heading
-      "t" 'org-todo
-      "T" '(lambda () (interactive) (evil-org-eol-call (lambda() (org-insert-todo-heading nil))))
-      "H" 'org-beginning-of-line
-      "L" 'org-end-of-line
-      "$" 'org-end-of-line
-      "^" 'org-beginning-of-line
-      (kbd "TAB") 'org-cycle)
-
-    ;; normal & insert state shortcuts.
-    (mapc (lambda (state)
-            (evil-define-key state org-mode-map
-              (kbd "M-l") 'org-metaright
-              (kbd "M-h") 'org-metaleft
-              (kbd "H-k") 'org-metaup
-              (kbd "H-j") 'org-metadown
-              (kbd "M-L") 'org-shiftmetaright
-              (kbd "M-H") 'org-shiftmetaleft
-              (kbd "H-K") 'org-shiftmetaup
-              (kbd "H-J") 'org-shiftmetadown
-              (kbd "M-o") '(lambda () (interactive)
-                             (evil-org-eol-call
-                              '(lambda()
-                                 (org-insert-heading)
-                                 (org-metaright))))
-              (kbd "M-t") '(lambda () (interactive)
-                             (evil-org-eol-call
-                              '(lambda()
-                                 (org-insert-todo-heading nil)
-                                 (org-metaright))))
-              ))
-          '(normal insert))
-
-    (eval-after-load 'org
-      ;; move the leader bindings to `m` prefix to be consistent with
-      ;; the rest of spacemacs bindings
-      '(evil-leader/set-key-for-mode 'org-mode
-         "a" nil "ma" 'org-agenda
-         "c" nil "mA" 'org-archive-subtree
-         "t" nil "mt" 'org-show-todo-tree)))

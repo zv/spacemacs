@@ -181,10 +181,12 @@
 (zv//initial-path-keybinding `(("fea" . "~/Development/quad/newadmin")
                                ("feq" . "~/Development/quad")
                                ("fez" . ,zv-configuration-layer-directory)
+                               ("fel" . "~/Development/practice/lang")
                                ("feg" . "~/.gnus.el")
                                ("fzd" . "~/Development/dotfilez")
                                ("fer" . "~/.emacs.d/.ercrc.el")
-                               ("fzo" . ,org-directory)))
+                               ("fzo" . ,org-directory)
+                               ))
 
 ;; ---------------------------------------------------------------------------
 ;; mode bindings
