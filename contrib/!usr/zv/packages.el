@@ -1,15 +1,13 @@
 (defvar zv-packages '(
-                      ;; ggtags
-                      ;; helm-gtags
                       bbdb
                       erc-hl-nicks
-                      evil-org
-                      jade-mode
-                      nodejs-repl
-                      org
-                      org-bullets
-                      org-pomodoro
-                      org-repo-todo
+                      ;;evil-org
+                      ;;jade-mode
+                      ;;nodejs-repl
+                      ;; org
+                      ;; org-bullets
+                      ;; org-pomodoro
+                      ;; org-repo-todo
                       ))
 
 (defvar zv-excluded-packages '())
@@ -29,57 +27,6 @@
     :config (setq bbdb-expand-mail-aliases t
                   bbdb-complete-name-full-completion t
                   bbdb-file (concat user-emacs-directory "/bbdb.gpg"))))
-
-(defun zv/init-ggtags ()
-  (use-package ggtags
-    :defer t
-    :init
-    (progn
-      (add-hook 'c-mode-common-hook
-                (lambda ()
-                  (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-                    (ggtags-mode 1))))
-      (define-key ggtags-mode-map (kbd "C-c g y") 'ggtags-find-other-symbol)
-      (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
-      (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
-      (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
-      (define-key ggtags-mode-map (kbd "C-c g /") 'ggtags-grep)
-      (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-query-replace)
-      (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
-
-      ;; Replace our find file definition
-      (define-key evil-motion-state-map "gf" 'ggtags-find-file)
-      (define-key evil-motion-state-map "\C-]" 'ggtags-find-definition)
-      (define-key evil-motion-state-map (kbd "g]") 'ggtags-find-tag-dwim)
-      (define-key evil-motion-state-map "g\C-]" 'ggtags-find-reference)
-
-      (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark))))
-
-(defun zv/init-helm-gtags ()
-  (use-package helm-gtags
-    :defer t
-    :init
-    (progn
-      (setq
-       helm-gtags-ignore-case t
-       helm-gtags-auto-update t
-       helm-gtags-use-input-at-cursor t
-       helm-gtags-pulse-at-cursor t
-       helm-gtags-prefix-key "\C-cg"
-       helm-gtags-suggested-key-mapping t)
-
-      (diminish 'helm-gtags-mode)
-      ;; Enable helm-gtags-mode
-      ;; Tag select
-      (add-hook 'dired-mode-hook 'helm-gtags-mode)
-      (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-      (add-hook 'c-mode-hook 'helm-gtags-mode)
-      (add-hook 'c++-mode-hook 'helm-gtags-mode)
-      (add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-      ;; (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-      (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack))))
 
 (defun zv/init-jade-mode ()
   (use-package jade-mode

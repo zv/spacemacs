@@ -12,8 +12,8 @@
     :mode ("\\.org$" . org-mode)
     :init
     (progn
-      (add-to-list 'load-path "/home/zv/.emacs.d/contrib/usr/zv/extensions/org/lisp")
-      (add-to-list 'load-path "/home/zv/.emacs.d/contrib/usr/zv/extensions/org/contrib/lisp")
+      (add-to-list 'load-path "/home/zv/.emacs.d/contrib/!usr/zv/extensions/org/lisp")
+      (add-to-list 'load-path "/home/zv/.emacs.d/contrib/!usr/zv/extensions/org/contrib/lisp")
       (setq org-log-done t)
 
       (eval-after-load 'org-indent

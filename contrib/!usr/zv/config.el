@@ -2,7 +2,7 @@
 ;; Configuration Layer Parameters
 ;;---------------------------------------------------------------------
 (defconst zv-configuration-layer-directory
-  (expand-file-name (concat configuration-layer-contrib-directory "usr/zv/"))
+  (expand-file-name (concat configuration-layer-contrib-directory "!usr/zv/"))
   "zv contribution layer base directory.")
 
 (setq spacemacs-repository "emacs.d")
@@ -168,7 +168,7 @@
   '(progn
      (require 'em-smart)
      ;; Ensure we set the path correctly
-     (setq   eshell-path-env (concat "/usr/local/bin" ":" eshell-path-env))
+     (setq   eshell-path-env (concat "/!usr/local/bin" ":" eshell-path-env))
      ;; Ensure eshell
      (evil-define-key 'normal eshell-mode-map (kbd "0") 'eshell-bol)
      (evil-define-key 'normal eshell-mode-map (kbd "C-p") 'eshell-previous-prompt)
@@ -191,7 +191,8 @@
            web-mode-css-indent-offset 2
            web-mode-code-indent-offset 2)
 
-     (add-hook 'web-mode-hook (lambda () (turn-off-smartparens-mode)))))
+     ;; (add-hook 'web-mode-hook (lambda () (turn-off-smartparens-mode)))
+     ))
 
 (eval-after-load 'eww
   '(progn

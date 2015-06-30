@@ -76,10 +76,6 @@
 
 (define-key evil-normal-state-map "K" 'zv/join-up)
 
-(evil-leader/set-key
-  ;; helm-find
-  "hf" 'helm-ag)
-
 ;; ---------------------------------------------------------------------------
 ;; evil state bindings
 ;; ---------------------------------------------------------------------------
@@ -128,15 +124,15 @@
 
 ;; Add surround-inner-word keybindings at s{char} and S{char} appropriately
 ;; e.x 9" -> ysiw"
-(let ((inner-word-key "s")
-      (outer-word-key "S"))
-  (progn
-  (define-key evil-normal-state-map inner-word-key nil)
-  (define-key evil-normal-state-map outer-word-key nil)
-  (mapcar (lambda (char)
-            (define-key evil-normal-state-map (concat inner-word-key char) (concat "ysiw" char))
-            (define-key evil-normal-state-map (concat outer-word-key char) (concat "ysiW" char))
-            ) '("'" "\"" ")" "(" "[" "]" "{" "}"))))
+;; (let ((inner-word-key "s")
+;;       (outer-word-key "S"))
+;;   (progn
+;;   (define-key evil-normal-state-map inner-word-key nil)
+;;   (define-key evil-normal-state-map outer-word-key nil)
+;;   (mapcar (lambda (char)
+;;             (define-key evil-normal-state-map (concat inner-word-key char) (concat "ysiw" char))
+;;             (define-key evil-normal-state-map (concat outer-word-key char) (concat "ysiW" char))
+;;             ) '("'" "\"" ")" "(" "[" "]" "{" "}"))))
 
 
 ;; ---------------------------------------------------------------------------
@@ -144,7 +140,7 @@
 ;; ---------------------------------------------------------------------------
 (evil-leader/set-key
   ;; applications
-  "ai" 'erc-connect
+  ;; overridden by package
   "aw" 'woman
   "am" 'man
   "ag" 'gnus
@@ -197,7 +193,7 @@
     "mf" 'magit-key-mode-popup-gitflow))
 
 ;; cc mode
-(define-key c-mode-map next-buffer-key 'evil-window-next)
+;; (define-key c-mode-map next-buffer-key 'evil-window-next)
 (evil-leader/set-key-for-mode 'c-mode
   ;; guess style
   "mq" 'c-guess)
