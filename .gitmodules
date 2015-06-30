@@ -19,3 +19,6 @@
 [submodule "spacemacs/extensions/yasnippet-snippets"]
 	path = spacemacs/extensions/yasnippet-snippets
 	url = https://github.com/AndreaCrotti/yasnippet-snippets.git
+[submodule "contrib/!usr/zv/extensions/org"]
+	path = contrib/!usr/zv/extensions/org
+	url = git://orgmode.org/org-mode.git
