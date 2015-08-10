@@ -2,11 +2,6 @@
 
 (defvar zv-post-extensions '())
 
-(defun zv/init-typescript ()
-  (use-package typescript
-    :mode (("\\.d.ts$" . typescript-mode)
-           ("\\.ts$" . typescript-mode))))
-
 (defun zv/init-org ()
   (use-package org
     :mode ("\\.org$" . org-mode)

@@ -70,4 +70,3 @@ FUN function callback"
 (defun delete-tern-process ()
   (interactive)
   (delete-process "Tern"))
-

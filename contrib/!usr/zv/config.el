@@ -9,8 +9,6 @@
 (setq spacemacs-repository-owner "zv")
 
 (setq-default
- ;; Org Mode
- org-directory (expand-file-name "~/org")
  ;; ERC
  zv-erc-directory (expand-file-name (concat user-emacs-directory ".erc/"))
  ignored-irc-commands '("JOIN" "PART" "QUIT" "NICK" "AWAY")
@@ -56,24 +54,24 @@
 (setq tern-command '("node" "/bin/tern"))
 
 ;; tramp
-(require 'tramp)
-(setq tramp-default-method "ssh")
-(add-to-list 'tramp-default-method-alist '("" "zv" "ssh"))
-(add-to-list 'tramp-default-method-alist
-             '("\\`localhost\\'" "\\`root\\'" "su"))
-(add-to-list 'tramp-default-method-alist
-             '("\\`localhost\\'" "\\`root\\'" "sudo"))
-(add-to-list 'tramp-default-method-alist
-             '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
-(add-to-list 'tramp-default-method-alist
-             '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
+;; (require 'tramp)
+;; (setq tramp-default-method "ssh")
+;; (add-to-list 'tramp-default-method-alist '("" "zv" "ssh"))
+;; (add-to-list 'tramp-default-method-alist
+;;              '("\\`localhost\\'" "\\`root\\'" "su"))
+;; (add-to-list 'tramp-default-method-alist
+;;              '("\\`localhost\\'" "\\`root\\'" "sudo"))
+;; (add-to-list 'tramp-default-method-alist
+;;              '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
+;; (add-to-list 'tramp-default-method-alist
+;;              '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
 
-(add-to-list 'tramp-default-user-alist '("su" "localhost" "root"))
-(add-to-list 'tramp-default-user-alist '("sudo" "localhost" "root"))
+;; (add-to-list 'tramp-default-user-alist '("su" "localhost" "root"))
+;; (add-to-list 'tramp-default-user-alist '("sudo" "localhost" "root"))
 
-;; Use .authinfo for local su
-(tramp-set-completion-function "su" '((tramp-parse-netrc "~/.authinfo")))
-(tramp-set-completion-function "sudo" '((tramp-parse-netrc "~/.authinfo")))
+;; ;; Use .authinfo for local su
+;; (tramp-set-completion-function "su" '((tramp-parse-netrc "~/.authinfo")))
+;; (tramp-set-completion-function "sudo" '((tramp-parse-netrc "~/.authinfo")))
 
 ;; VC Mode
 (eval-after-load 'vc
@@ -89,7 +87,6 @@
  vc-make-backup-files nil
  ;; Always follow a symlink inside of a git repository that slnz things
  vc-follow-symlinks t)
-
 
 ;; encrypt hook ------------------------------------------------------------------
 
