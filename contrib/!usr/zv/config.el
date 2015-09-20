@@ -53,26 +53,6 @@
 ;; tern
 (setq tern-command '("node" "/bin/tern"))
 
-;; tramp
-;; (require 'tramp)
-;; (setq tramp-default-method "ssh")
-;; (add-to-list 'tramp-default-method-alist '("" "zv" "ssh"))
-;; (add-to-list 'tramp-default-method-alist
-;;              '("\\`localhost\\'" "\\`root\\'" "su"))
-;; (add-to-list 'tramp-default-method-alist
-;;              '("\\`localhost\\'" "\\`root\\'" "sudo"))
-;; (add-to-list 'tramp-default-method-alist
-;;              '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
-;; (add-to-list 'tramp-default-method-alist
-;;              '("\\`sigstkflt\\'" "\\`root\\'" "sudo"))
-
-;; (add-to-list 'tramp-default-user-alist '("su" "localhost" "root"))
-;; (add-to-list 'tramp-default-user-alist '("sudo" "localhost" "root"))
-
-;; ;; Use .authinfo for local su
-;; (tramp-set-completion-function "su" '((tramp-parse-netrc "~/.authinfo")))
-;; (tramp-set-completion-function "sudo" '((tramp-parse-netrc "~/.authinfo")))
-
 ;; VC Mode
 (eval-after-load 'vc
   '(progn
