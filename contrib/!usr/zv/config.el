@@ -20,20 +20,17 @@
                       "__dirname" "JSON" "location" "refute" "require" "setInterval" "setTimeout"
                       "sinon" "Quad" "quad" "DS")
  js2-basic-offset                 2
- ;; js2-strict-missing-semi-warning  t
+ js2-strict-missing-semi-warning  nil
  js2-include-node-externs         t
- js2-include-browser-externs      t
- )
+ js2-include-browser-externs      t)
 
 ;; Additional emacs modes ------------------------------------
 (mapc (lambda (x) (evil-set-initial-state x 'emacs))
-      '(
-        epa-key-list-mode
+      '(epa-key-list-mode
         epa-key-mode
         epa-mail-mode
         Info-mode
-        Man-mode
-        ))
+        Man-mode))
 
 ;; store all backup and autosave files in the tmp dir
 (setq backup-directory-alist `(("/home/.*" . ,temporary-file-directory))
