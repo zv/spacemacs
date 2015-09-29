@@ -180,35 +180,28 @@ Will work on both org-mode and any mode that accepts plain html."
         (if dotspacemacs-major-mode-leader-key
             (concat "m" dotspacemacs-major-mode-leader-key)
           "m,") 'org-ctrl-c-ctrl-c
-        "m*" 'org-ctrl-c-star
-        "m RET" 'org-ctrl-c-ret
-        "m-" 'org-ctrl-c-minus
-        "m^" 'org-sort
-        "m/" 'org-sparse-tree
+          "mn" 'org-narrow-to-subtree
+          "mN" 'widen
+          "mO" 'org-clock-out
+          "mq" 'org-clock-cancel
+          "mR" 'org-refile
+          "ms" 'org-schedule
 
-        "mI" 'org-clock-in
-        "mn" 'org-narrow-to-subtree
-        "mN" 'widen
-        "mO" 'org-clock-out
-        "mq" 'org-clock-cancel
-        "mR" 'org-refile
-        "ms" 'org-schedule
+          ;; insertion of common elements
+          "mil" 'org-insert-link
+          "mif" 'org-footnote-new
+          "mik" 'spacemacs/insert-keybinding-org
 
-        ;; insertion of common elements
-        "mil" 'org-insert-link
-        "mif" 'org-footnote-new
-        "mik" 'spacemacs/insert-keybinding-org
-
-        ;; images and other link types have no commands in org mode-line
-        ;; could be inserted using yasnippet?
-        ;; region manipulation
-        "mxb" (spacemacs|org-emphasize spacemacs/org-bold ?*)
-        "mxc" (spacemacs|org-emphasize spacemacs/org-code ?~)
-        "mxi" (spacemacs|org-emphasize spacemacs/org-italic ?/)
-        "mxr" (spacemacs|org-emphasize spacemacs/org-clear ? )
-        "mxs" (spacemacs|org-emphasize spacemacs/org-strike-through ?+)
-        "mxu" (spacemacs|org-emphasize spacemacs/org-underline ?_)
-        "mxv" (spacemacs|org-emphasize spacemacs/org-verbose ?=))
+          ;; images and other link types have no commands in org mode-line
+          ;; could be inserted using yasnippet?
+          ;; region manipulation
+          "mxb" (spacemacs|org-emphasize spacemacs/org-bold ?*)
+          "mxc" (spacemacs|org-emphasize spacemacs/org-code ?~)
+          "mxi" (spacemacs|org-emphasize spacemacs/org-italic ?/)
+          "mxr" (spacemacs|org-emphasize spacemacs/org-clear ? )
+          "mxs" (spacemacs|org-emphasize spacemacs/org-strike-through ?+)
+          "mxu" (spacemacs|org-emphasize spacemacs/org-underline ?_)
+          "mxv" (spacemacs|org-emphasize spacemacs/org-verbose ?=))
 
       (with-eval-after-load 'org-agenda
         (define-key org-agenda-mode-map "j" 'org-agenda-next-line)
@@ -217,25 +210,7 @@ Will work on both org-mode and any mode that accepts plain html."
         (define-key org-agenda-mode-map
           (kbd "RET") 'org-agenda-show-and-scroll-up)
         (define-key org-agenda-mode-map
-          (kbd "SPC") evil-leader--default-map))
-
-      ;; Add global evil-leader mappings. Used to access org-agenda
-      ;; functionalities – and a few others commands – from any other mode.
-      (spacemacs/declare-prefix "ao" "org")
-      (evil-leader/set-key
-        ;; org-agenda
-        "ao#" 'org-agenda-list-stuck-projects
-        "ao/" 'org-occur-in-agenda-files
-        "aoa" 'org-agenda-list
-        "aoe" 'org-store-agenda-views
-        "aom" 'org-tags-view
-        "aoo" 'org-agenda
-        "aos" 'org-search-view
-        "aot" 'org-todo-list
-        ;; other
-        "aoO" 'org-clock-out
-        "aoc" 'org-capture
-        "aol" 'org-store-link))
+          (kbd "SPC") evil-leader--default-map)))
     :config
     (progn
       ;; setup org directory
