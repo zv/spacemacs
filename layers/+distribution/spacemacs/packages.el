@@ -180,21 +180,35 @@
   (use-package auto-highlight-symbol
     :defer t
     :init
-    (spacemacs/add-to-hooks 'auto-highlight-symbol-mode '(prog-mode-hook
-                                                          markdown-mode-hook))
-    :config
     (progn
       (setq ahs-case-fold-search nil
             ahs-default-range 'ahs-range-whole-buffer
-            ;; disable auto-highlight of symbol
-            ;; current symbol should be highlight on demand with <SPC> s h
+            ;; by default disable auto-highlight of symbol
+            ;; current symbol can always be highlighted with <SPC> s h
             ahs-idle-timer 0
             ahs-idle-interval 0.25
             ahs-inhibit-face-list nil)
 
+      (spacemacs|add-toggle automatic-symbol-highlight
+        :status (timerp ahs-idle-timer)
+        :on (progn
+              (auto-highlight-symbol-mode)
+              (setq ahs-idle-timer
+                    (run-with-idle-timer ahs-idle-interval t
+                                         'ahs-idle-function)))
+        :off (when (timerp ahs-idle-timer)
+               (auto-highlight-symbol-mode)
+               (cancel-timer ahs-idle-timer)
+               (setq ahs-idle-timer 0))
+        :documentation "Automatic highlight of current symbol."
+        :evil-leader "tha")
+      (spacemacs/add-to-hooks 'auto-highlight-symbol-mode '(prog-mode-hook
+                                                            markdown-mode-hook)))
+    :config
+    (progn
+      (spacemacs|hide-lighter auto-highlight-symbol-mode)
       (defvar-local spacemacs-last-ahs-highlight-p nil
         "Info on the last searched highlighted symbol.")
-
       (defvar-local spacemacs--ahs-searching-forward t)
 
       (defun spacemacs/goto-last-searched-ahs-symbol ()
@@ -203,14 +217,17 @@
         (interactive)
         (if spacemacs-last-ahs-highlight-p
             (progn (goto-char (nth 1 spacemacs-last-ahs-highlight-p))
-                   (eval '(progn (spacemacs/ahs-highlight-now-wrapper) (ahs-back-to-start)) nil))
+                   (spacemacs/ahs-highlight-now-wrapper)
+                   (spacemacs/symbol-highlight-micro-state))
           (message "No symbol has been searched for now.")))
 
       (defun spacemacs/integrate-evil-search (forward)
         ;; isearch-string is last searched item.  Next time
         ;; "n" is hit we will use this.
-        (setq isearch-string (concat "\\<" (evil-find-thing forward 'symbol) "\\>"))
-        (setq isearch-regexp (concat "\\<" (evil-find-thing forward 'symbol) "\\>"))
+        (setq isearch-string
+              (concat "\\<" (evil-find-thing forward 'symbol) "\\>")
+              isearch-regexp
+              (concat "\\<" (evil-find-thing forward 'symbol) "\\>"))
         ;; Next time "n" is hit, go the correct direction.
         (setq isearch-forward forward)
         ;; ahs does a case sensitive search.  We could set
@@ -225,8 +242,8 @@
         ;; Use this search term for empty pattern "%s//replacement/"
         ;; Append case sensitivity
         (setq evil-ex-last-was-search nil
-              evil-ex-substitute-pattern `(,(concat isearch-string "\\C") nil (0 0)))
-        )
+              evil-ex-substitute-pattern `(,(concat isearch-string "\\C")
+                                           nil (0 0))))
 
       (defun spacemacs/ensure-ahs-enabled-locally ()
         "Ensures ahs is enabled for the local buffer."
@@ -277,7 +294,7 @@
               (spacemacs/ahs-highlight-now-wrapper)
               (when (configuration-layer/package-usedp 'evil-jumper)
                 (evil-set-jump))
-              (spacemacs/highlight-symbol-micro-state)
+              (spacemacs/symbol-highlight-micro-state)
               (ahs-forward)
               )
           (progn
@@ -285,21 +302,23 @@
             (spacemacs/ahs-highlight-now-wrapper)
             (when (configuration-layer/package-usedp 'evil-jumper)
               (evil-set-jump))
-            (spacemacs/highlight-symbol-micro-state)
+            (spacemacs/symbol-highlight-micro-state)
             (ahs-backward)
             )))
 
       (eval-after-load 'evil
         '(progn
-           (define-key evil-motion-state-map (kbd "*") 'spacemacs/enter-ahs-forward)
-           (define-key evil-motion-state-map (kbd "#") 'spacemacs/enter-ahs-backward)))
+           (define-key evil-motion-state-map (kbd "*")
+             'spacemacs/enter-ahs-forward)
+           (define-key evil-motion-state-map (kbd "#")
+             'spacemacs/enter-ahs-backward)))
 
       (defun spacemacs/symbol-highlight ()
         "Highlight the symbol under point with `auto-highlight-symbol'."
         (interactive)
         (spacemacs/ahs-highlight-now-wrapper)
         (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))
-        (spacemacs/highlight-symbol-micro-state)
+        (spacemacs/symbol-highlight-micro-state)
         (spacemacs/integrate-evil-search nil))
 
       (defun spacemacs//ahs-ms-on-exit ()
@@ -314,10 +333,7 @@
 
       (evil-leader/set-key
         "sh" 'spacemacs/symbol-highlight
-        "sH" 'spacemacs/goto-last-searched-ahs-symbol
-        "sR" 'spacemacs/symbol-highlight-reset-range)
-
-      (spacemacs|hide-lighter auto-highlight-symbol-mode)
+        "sH" 'spacemacs/goto-last-searched-ahs-symbol)
 
       ;; micro-state to easily jump from a highlighted symbol to the others
       (dolist (sym '(ahs-forward
@@ -333,7 +349,7 @@
                    (spacemacs/ahs-highlight-now-wrapper)
                    (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))))))
 
-      (spacemacs|define-micro-state highlight-symbol
+      (spacemacs|define-micro-state symbol-highlight
         :doc (let* ((i 0)
                     (overlay-count (length ahs-overlay-list))
                     (overlay (format "%s" (nth i ahs-overlay-list)))

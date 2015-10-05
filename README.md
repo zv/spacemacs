@@ -13,7 +13,7 @@
 |
 <b><a href="doc/DOCUMENTATION.org">documentation</a></b>
 |
-<b><a href="doc/CONTRIBUTE.org">cont                                                       (spacemacs-0.104.0)ribute</a></b>
+<b><a href="doc/CONTRIBUTE.org">contribute</a></b>
 |
 <b><a href="doc/DOCUMENTATION.org#achievements">achievements</a></b>
 |
@@ -176,10 +176,10 @@ For efficient searches we recommend to install `pt` ([the platinum searcher][]).
    git clone --recursive https://github.com/syl20bnr/spacemacs ~/.emacs.d
    ```
 
-`master` is the stable branch and it is _immutable_, **DO NOT** make any
-modification to it or you will break the update mechanism. If you want to
-fork Spacemacs safely use the `develop` branch where you handle the update
-manually.
+   `master` is the stable branch and it is _immutable_, **DO NOT** make any
+   modification to it or you will break the update mechanism. If you want to
+   fork Spacemacs safely use the `develop` branch where you handle the update
+   manually.
 
 3. Launch Emacs. Spacemacs will automatically install the packages it requires.
 
@@ -277,7 +277,7 @@ Thank you !
 [VIMUSERS.org]: doc/VIMUSERS.org
 [dotfile]: doc/DOCUMENTATION.org#dotfile-configuration
 [troubleshoot]: doc/DOCUMENTATION.org#troubleshoot
-[osx layer]: contrib/osx/README.org
+[osx layer]: layers/osx/README.org
 [Gitter Chat]: https://gitter.im/syl20bnr/spacemacs
 [Gitter Chat IRC server]: https://irc.gitter.im/
 [emacs-mac-port]: https://github.com/railwaycat/homebrew-emacsmacport
