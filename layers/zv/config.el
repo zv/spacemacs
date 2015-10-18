@@ -82,7 +82,8 @@
     (when (or (member (file-name-directory (buffer-file-name)) dirs-to-encrypt) (member buffer-file-name files-to-encrypt))
       (epa-encrypt-file (buffer-file-name) recipient))))
 
-(add-hook 'after-save-hook 'zv/encrypt-secrets)
+;; Turn on encrypt hook
+;; (add-hook 'after-save-hook 'zv/encrypt-secrets)
 
 ;; hippie expand is dabbrev expand on steroids
 (setq hippie-expand-try-functions-list '(try-expand-dabbrev
