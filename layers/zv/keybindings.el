@@ -12,7 +12,6 @@
 ;; ---------------------------------------------------------------------------
 ;; swap C-j for C-x prefix keys
 ;; (global-set-key (kbd "C-j") ctl-x-map)
-
 (add-to-list 'spacemacs/key-binding-prefixes '("ar" . "applications-repl"))
 
 ;; ---------------------------------------------------------------------------
@@ -25,13 +24,18 @@
 
 ;; tab/window split manipulation]
 (define-key evil-normal-state-map "Q" 'evil-quit)
-(global-set-key next-buffer-key 'evil-window-next)
-(global-set-key prev-buffer-key 'evil-window-prev)
-(global-set-key "\C-\M-j" (lambda () (interactive) (rotate-windows 1)))
-(global-set-key "\C-\M-k" (lambda () (interactive) (rotate-windows -1)))
-(global-set-key "\M-h" (lambda () (interactive) (zv/enlarge-window-by-dominant-dimension -10)))
-(global-set-key "\M-l" (lambda () (interactive) (zv/enlarge-window-by-dominant-dimension 10)))
-(global-set-key (kbd "C-M-<return>") 'zv/tile-split-window)
+
+;; Check for 'next-buffer-key && 'prev-buffer-key
+(if (and (boundp 'next-buffer-key) (boundp 'prev-buffer-key))
+    (progn
+      (global-set-key next-buffer-key 'evil-window-next)
+      (global-set-key prev-buffer-key 'evil-window-prev)
+      (global-set-key (kbd "C-H-j" )(lambda () (interactive) (rotate-windows 1)))
+      (global-set-key (kbd "C-H-k" )(lambda () (interactive) (rotate-windows -1)))
+      (global-set-key (kbd "H-h" )(lambda () (interactive) (zv/enlarge-window-by-dominant-dimension -10)))
+      (global-set-key (kbd "H-l" )(lambda () (interactive) (zv/enlarge-window-by-dominant-dimension 10)))
+      (global-set-key (kbd "C-H-<return>") 'zv/tile-split-window)))
+
 (global-set-key (kbd "<Scroll_Lock>") 'scroll-lock-mode)
 
 ;; buffer
@@ -79,6 +83,9 @@
 ;; evil state bindings
 ;; ---------------------------------------------------------------------------
 (setq evil-cross-lines t)
+(evil-define-key 'normal evil-surround-mode-map "s" 'evil-surround-region)
+(evil-define-key 'normal evil-surround-mode-map "S" 'evil-substitute)
+
 (define-key evil-normal-state-map "\C-p" 'helm-projectile-find-file)
 (define-key evil-normal-state-map (kbd "RET") 'evil-scroll-down)
 (define-key evil-normal-state-map (kbd "<backspace>") 'evil-scroll-up)
@@ -99,7 +106,7 @@
 ;; (define-key evil-insert-state-map (kbd "C-i") 'backward-delete-char)
 ;; (define-key evil-insert-state-map (kbd "C-s") 'undo-tree-undo)
 
-;; visual mode
+;; normal mode
 (define-key evil-visual-state-map (kbd "C-e") 'eval-region)
 
 ;; As I never distinguish between [[ & [{, I might as well get the
@@ -143,7 +150,7 @@
   "aw" 'woman
   "am" 'man
   "ag" 'gnus
-  ;; Should check if we're in a visual select mode really.
+  ;; Should check if we're in a normal select mode really.
   "an" 'remember
   ;; repls
   "arn" 'nodejs-repl
@@ -160,6 +167,14 @@
   "cp" 'evilnc-comment-or-uncomment-paragraphs
   "ct" 'evilnc-quick-comment-or-uncomment-to-the-line
   "cy" 'evilnc-copy-and-comment-lines)
+
+
+;; Set our special "o" keys
+(evil-leader/set-key
+  "oo" 'org-capture
+  "oa" 'org-agenda
+  "oc" 'org-clock-in
+  )
 
 (defun zv//initial-path-keybinding (key-file-map)
   "Create leader keybindings from an alist of the form (KEYS . PATH)"
@@ -180,8 +195,7 @@
                                ("feg" . "~/.gnus.el")
                                ("fzd" . "~/Development/dotfilez")
                                ("fer" . "~/.emacs.d/.ercrc.el")
-                               ("fzo" . ,org-directory)
-                               ))
+                               ("fzo" . ,org-directory)))
 
 ;; ---------------------------------------------------------------------------
 ;; mode bindings
@@ -191,13 +205,11 @@
   (evil-leader/set-key-for-mode 'magit-status-mode
     "mf" 'magit-key-mode-popup-gitflow))
 
-;; cc mode
-;; (define-key c-mode-map next-buffer-key 'evil-window-next)
-(evil-leader/set-key-for-mode 'c-mode
-  ;; guess style
-  "mq" 'c-guess)
-
-(evil-leader/set-key-for-mode 'emacs-lisp-mode "mxe" 'eval-region)
+;; ;; cc mode
+;; ;; (define-key c-mode-map next-buffer-key 'evil-window-next)
+;; (evil-leader/set-key-for-mode 'c-mode
+;;   ;; guess style
+;;   "mq" 'c-guess)
 
 ;; js2 mode
 (eval-after-load 'js2-mode
@@ -206,19 +218,11 @@
      (define-key js2-mode-map next-buffer-key 'evil-window-next)
      (define-key js2-mode-map prev-buffer-key 'evil-window-prev)))
 
-;; calc
-;;; These keys are typically bound to `kill line' which I rarely use.
-(eval-after-load "calc"
-  (lambda () (define-key calc-mode-map next-buffer-key 'evil-window-prev)))
-
 ;; delete line
 
 (eval-after-load 'helm
   '(define-key helm-map (kbd "C-u") 'helm-delete-minibuffer-contents))
 
-
-;; evil leader eval region
-(evil-leader/set-key-for-mode 'evil-visual-state-map "xe" 'eval-region)
 
 ;; Autocomplete
 (eval-after-load 'auto-complete
