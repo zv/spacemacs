@@ -1,0 +1,16 @@
+#+TITLE: vim-powerline contribution layer for Spacemacs
+
+* Table of Contents                                         :TOC_4_org:noexport:
+ - [[Description][Description]]
+ - [[Install][Install]]
+
+* Description
+A powerline theme modeled after the vim powerline theme.
+
+* Install
+
+To use this contribution add it to your =~/.spacemacs=
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default dotspacemacs-configuration-layers '(vim-powerline))
+#+END_SRC

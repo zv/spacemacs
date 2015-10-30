@@ -2,24 +2,25 @@
 
 [[file:img/git.png]]
 
-* Table of Contents                                                   :TOC@4:
- - [[#description][Description]]
-   - [[#features][Features:]]
- - [[#install][Install]]
-   - [[#layer][Layer]]
-     - [[#recommended-settings][Recommended Settings]]
-   - [[#magit-status-fullscreen][Magit status fullscreen]]
-   - [[#magit-auto-complete][Magit auto-complete]]
-   - [[#magit-svn-plugin][Magit SVN plugin]]
-   - [[#git][Git]]
-   - [[#git-flow][Git-Flow]]
- - [[#working-with-git][Working with Git]]
-   - [[#magit][Magit]]
-   - [[#commit-message-edition-buffer][Commit message edition buffer]]
-   - [[#interactive-rebase-buffer][Interactive rebase buffer]]
-   - [[#quick-guide-for-recurring-use-cases-in-magit][Quick guide for recurring use cases in Magit]]
-   - [[#git-flow][Git-Flow]]
-   - [[#git-time-machine][Git time machine]]
+* Table of Contents                                         :TOC_4_org:noexport:
+ - [[Description][Description]]
+   - [[Features:][Features:]]
+ - [[Install][Install]]
+   - [[Layer][Layer]]
+     - [[Recommended Settings][Recommended Settings]]
+   - [[Magit status fullscreen][Magit status fullscreen]]
+   - [[Magit auto-complete][Magit auto-complete]]
+   - [[Magit SVN plugin][Magit SVN plugin]]
+   - [[Git][Git]]
+   - [[Git-Flow][Git-Flow]]
+ - [[Working with Git][Working with Git]]
+   - [[Magit][Magit]]
+   - [[Staging lines][Staging lines]]
+   - [[Commit message editing buffer][Commit message editing buffer]]
+   - [[Interactive rebase buffer][Interactive rebase buffer]]
+   - [[Quick guide for recurring use cases in Magit][Quick guide for recurring use cases in Magit]]
+   - [[Git-Flow][Git-Flow]]
+   - [[Git time machine][Git time machine]]
 
 * Description
 
@@ -138,52 +139,48 @@ Git commands (start with ~g~):
 
 To open a =status buffer=, type in a buffer of a Git repository: ~SPC g s~
 
-~hjkl~ navigation is enabled in all Magit buffers. The default Magit keys
-on ~hjkl~ (if they exist) are remapped on ~HJKL~.
+| Key Binding | Description                                         |
+|-------------+-----------------------------------------------------|
+| ~/~         | evil-search                                         |
+| ~$~         | open =command output buffer=                        |
+| ~c c~       | open a =commit message buffer=                      |
+| ~b b~       | checkout a branch                                   |
+| ~b c~       | create a branch                                     |
+| ~f f~       | fetch changes                                       |
+| ~F -r F~    | pull and rebase                                     |
+| ~gr~        | refresh                                             |
+| ~j~         | goto next magit section                             |
+| ~C-j~       | next visual line                                    |
+| ~k~         | goto previous magit section                         |
+| ~C-k~       | previous visual line                                |
+| ~l l~       | open =log buffer=                                   |
+| ~n~         | next search occurrence                              |
+| ~N~         | previous search occurrence                          |
+| ~o~         | revert item at point                                |
+| ~P P~       | push                                                |
+| ~q~         | quit                                                |
+| ~s~         | on a file or hunk in a diff: stage the file or hunk |
+| ~x~         | discard changes                                     |
+| ~+~         | on a hunk: increase hunk size                       |
+| ~-~         | on a hunk: decrease hunk size                       |
+| ~S~         | stage all                                           |
+| ~TAB~       | on a file: expand/collapse diff                     |
+| ~u~         | on a staged file: unstage                           |
+| ~U~         | unstage all staged files                            |
+| ~v or V~    | select multiple lines                               |
+| ~z z~       | stash changes                                       |
 
-Here are the often used bindings inside a =status buffer=, please note that
-the following key bindings are valid in Vim editing style, in Emacs editing
-style you can refer directly to the magit manual:
+** Staging lines
+Magit allows you to stage specific lines by selecting them in a diff and hitting
+=s= to stage. Due to inconsistencies between Vim and Emacs editing styles, if
+you enter visual line state with =V=, you will stage one more line than
+intended. To work around this, you can use =v= instead (since Magit only stages
+whole lines, in any case).
 
-| Key Binding      | Description                                         |
-|------------------+-----------------------------------------------------|
-| ~/~              | evil-search                                         |
-| ~$~              | open =command output buffer=                        |
-| ~c c~            | open a =commit message buffer=                      |
-| ~b b~            | checkout a branch                                   |
-| ~b c~            | create a branch                                     |
-| ~f f~            | fetch changes                                       |
-| ~F -r F~         | pull and rebase                                     |
-| ~h~              | go left                                             |
-| ~j~              | go down                                             |
-| ~C-S-j~ or ~C-n~ | goto next magit section                             |
-| ~k~              | go up                                               |
-| ~K~              | discard changes                                     |
-| ~C-S-k~ or ~C-p~ | goto previous magit section                         |
-| ~l~              | go right                                            |
-| ~L l~            | open =log buffer=                                   |
-| ~n~              | next search occurrence                              |
-| ~N~              | previous search occurrence _or_ SVN sub-menu        |
-| ~P P~            | push                                                |
-| ~q~              | quit                                                |
-| ~s~              | on a file or hunk in a diff: stage the file or hunk |
-| ~+~              | on a hunk: increase hunk size                       |
-| ~-~              | on a hunk: decrease hunk size                       |
-| ~S~              | stage all                                           |
-| ~TAB~            | on a file: expand/collapse diff                     |
-| ~u~              | on a staged file: unstage                           |
-| ~U~              | unstage all staged files                            |
-| ~v~              | go to =visual state=                                |
-| ~V~              | go to =visual-line state=                           |
-| ~C-v~            | revert item at point                                |
-| ~z z~            | stash changes                                       |
-
-** Commit message edition buffer
-
-In a commit message buffer press ~C-c C-c~
-to commit the changes with the entered message.
-Pressing ~C-c C-k~ will discard the commit
-message.
+** Commit message editing buffer
+In a commit message buffer press ~,c~ (if =dotspacemacs-major-mode-leader-key= is ~,~)
+or ~C-c C-c~ to commit the changes with the entered message. Pressing ~,a~ or ~C-c C-k~
+will discard the commit message.
 
 | Key Binding | Description |
 |-------------+-------------|
@@ -196,21 +193,19 @@ message.
 
 | Key Binding | Description    |
 |-------------+----------------|
-| ~c~         | pick           |
+| ~c~ or ~p~  | pick           |
 | ~e~         | edit           |
 | ~f~         | fixup          |
-| ~h~         | go left        |
 | ~j~         | go down        |
-| ~J~         | move line down |
+| ~gj~        | move line down |
 | ~k~         | go up          |
-| ~K~         | move line up   |
-| ~C-k~       | kill line      |
-| ~l~         | go right       |
+| ~gk~        | move line up   |
+| ~d~ or ~x~  | kill line      |
 | ~r~         | reword         |
 | ~s~         | squash         |
 | ~u~         | undo           |
-| ~x~         | execute        |
 | ~y~         | insert         |
+| ~!~         | execute        |
 
 ** Quick guide for recurring use cases in Magit
 
