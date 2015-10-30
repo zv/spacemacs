@@ -653,7 +653,7 @@ Hybrid mode can be enabled by setting =dotspacemacs-editing-style= to =hybrid=.
 To switch between evil and hybrid mode use ~SPC t E y~ and ~M-m t E y~.
 
 ** States
-=Spacemacs= has 10 states:
+Spacemacs has 10 states:
 
 | State        | Color       | Description                                                                                                |
 |--------------+-------------+------------------------------------------------------------------------------------------------------------|
