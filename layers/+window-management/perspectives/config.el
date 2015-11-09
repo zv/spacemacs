@@ -5,6 +5,13 @@
 ;;; License: GPLv3
 
 ;; Variables
-(defvar perspective-enable-persp-projectile nil
-  "If non nil the helm-projectile-swtich-project command will create
-a new perspective for each new project.")
+
+(defvar spacemacs-layouts-save-dir
+  (expand-file-name (concat spacemacs-cache-directory "perspectives/"))
+  "Save perspectives in this directory.")
+
+(defvar layouts-enable-autosave nil
+  "If true, saves perspectives to file per `layouts-autosave-delay'")
+
+(defvar layouts-autosave-delay 900
+  "Delay in seconds between each layouts auto-save.")

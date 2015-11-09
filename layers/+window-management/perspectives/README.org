@@ -24,6 +24,65 @@ To use this contribution add it to your =~/.spacemacs=
   (setq-default dotspacemacs-configuration-layers '(perspectives))
 #+END_SRC
 
+* Features 
+
+** Micro-states
+*** Perspective Management Micro State
+
+Prefix command for perspective management commands is ~SPC l~ (for Layout).
+
+| Key Binding            | Description                                     |
+|------------------------+-------------------------------------------------|
+| ~SPC l ?~              | Toggle Documentation of micro-state             |
+| ~SPC l l~              | List perspectives                               |
+| ~SPC l b~              | List buffers in current perspective             |
+| ~SPC l f~              | List buffers in current perspective             |
+| ~SPC l K~              | Remove buffer from perspective                  |
+| ~SPC l i~              | import all buffers from other perspective       |
+| ~SPC l t~              | display buffer without adding it to perspective |
+| ~SPC l a~              | add buffer to current perspective               |
+| ~SPC l x~              | kill current perspective with its buffers       |
+| ~SPC l X~              | kill other perspective with its buffers         |
+| ~SPC l c~              | close current perspective and keep buffers      |
+| ~SPC l c~              | close current perspective and keep buffers      |
+| ~SPC l C~              | close other perspective and keep buffers        |
+| ~SPC l i~              | Import buffers from other perspective           |
+| ~SPC l o~              | open a custom perspective                       |
+| ~SPC l n~              | switch to next perspective                      |
+| ~SPC l N~ or ~SPC W p~ | switch to previous perspective                  |
+| ~SPC l <tab>~          | switch to latest perspective                    |
+| ~SPC l [1..n..9]~      | switch to nth perspective                       |
+| ~SPC l r~              | rename perspective                              |
+| ~SPC l w~              | Save perspectives to file                       |
+| ~SPC l L~              | Load perspectives from file                     |
+| ~SPC l s~              | switch perspective                              |
+
+*** Custom Perspectives Micro State
+
+The default bindings are the following:
+
+| Key Binding | Description                                              |
+|-------------+----------------------------------------------------------|
+| ~SPC l o e~ | Emacs custom perspective                                 |
+| ~SPC l o E~ | ERC custom perspective (needs the erc layer enabled)     |
+| ~SPC l o i~ | RCIRC custom perspective (needs the rcirc layer enabled) |
+| ~SPC l o o~ | Org custom perspective                                   |
+
+You can of course add more custom perspectives by using the
+~spacemacs|define-custom-layout~ macro explained further below.
+
+** Per project custom perpsective
+
+Projectile will work normally in any perspectives by adding buffers to the current
+perspective, but if you want to create a perspective specific to some project you
+can use the ~SPC l P~.
+
+** Save/Load perspectives into a file
+
+With ~SPC l w~ and ~SPC l L~ you can save and load perspectives to a file this
+is done without configuration, support is great for emacs 24.4, but depends on
+=workgroups.el= for Emacs <= 24.3.
+
 ** Custom Perspective Macro
 If you want to add a new custom-persp (for example if you want to have
 IRC on its own perspective or maybe calendar or gnus) you have to use

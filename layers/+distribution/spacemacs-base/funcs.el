@@ -877,3 +877,16 @@ is nonempty."
     (cond ((listp val) val)
           ((stringp val) (< 0 (length val)))
           (t))))
+
+(defun spacemacs/switch-to-scratch-buffer ()
+  "Switch to the `*scratch*' buffer. Create it first if needed."
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*")))
+
+;; http://stackoverflow.com/questions/11847547/emacs-regexp-count-occurrences
+(defun how-many-str (regexp str)
+  (loop with start = 0
+        for count from 0
+        while (string-match regexp str start)
+        do (setq start (match-end 0))
+        finally return count))
