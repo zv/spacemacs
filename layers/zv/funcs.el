@@ -75,6 +75,7 @@ FUN function callback"
   (progn
     ;; Ninez Ponce - 18662752447
     ;; (spacemacs|disable-company org-mode)
+    ;; Other interesting characters are ↴, ⬎, ⤷, and ⋱.
 
     (setq org-default-notes-file (expand-file-name "~/Documents/notes.org"))
 

@@ -189,7 +189,7 @@
     ">"    'end-of-buffer
     "<"    'beginning-of-buffer
     "."    'beginning-of-buffer
-    "RET" 'man-follow
+    "RET" 'woman-follow
     "d"    'scroll-up-command
     "u"    'scroll-down-command
     "gs"   'Man-goto-section
@@ -265,7 +265,6 @@
 ;; NetworkManager, so we have to manually set it up first.
 ;;(smart-tabs-advice c-indent-line c-basic-offset)
 ;;(smart-tabs-advice c-indent-region c-basic-offset)
-
 
 ;; Implements the weird "if" alignment
 (defun nm-lineup-arglist (langelem)
