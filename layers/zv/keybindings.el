@@ -240,9 +240,13 @@
 ;; Info Mode
 (evil-add-hjkl-bindings Info-mode-map 'emacs
   "0" 'evil-digit-argument-or-evil-beginning-of-line
-  (kbd "\M-h") 'Info-help   ; "h"
+  (kbd "M-h") 'Info-help   ; "h"
   "/" 'Info-search
   "?" 'Info-search-backward
+  "U" 'Info-up
+  "D" 'Info-directory
+  "u" 'Info-scroll-down
+  "d" 'Info-scroll-up
   "\C-u" 'Info-scroll-down
   "\C-d" 'Info-scroll-up
   "\C-t" 'Info-history-back ; "l"
