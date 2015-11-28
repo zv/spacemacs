@@ -200,15 +200,73 @@
 
 ()
 
+
+(spacemacs|use-package-add-hook org
+  :post-config
+  (progn
+    ;; (spacemacs|disable-company org-mode)
+    (setq org-default-notes-file (expand-file-name "~/Documents/notes.org"))
+    (setq org-appointments-note-file (expand-file-name "~/Documents/appointments_and_shopping.org"))
+
+    (setq org-agenda-files `("~/Documents" "~/Documents/SFGOV"))
+
+    ;; Do not dim blocked tasks
+    (setq org-agenda-dim-blocked-tasks nil)
+
+    ;; Compact the block agenda view
+    (setq org-agenda-compact-blocks t)
+
+    ;; Catch edits to invisible sections of the screen
+    (setq org-catch-invisible-edits t)
+    ;; When running babel blocks in sh, I usually mean `zsh'
+    (setq org-babel-sh-command "zsh")
+
+    ;; Files
+    (setq org-capture-templates
+          `(("t" "Tasks" entry (file+headline ,org-default-notes-file "Tasks")
+             "* TODO %?\n" :clock-in t :clock-resume t)
+            ;; Quotes
+            ("q" "Quotes" plain
+             (file (concat org-directory "quotes.org"))
+             "#+BEGIN_QUOTE\n%?\n#+END_QUOTE" :empty-lines 1)
+            ;; Appointment
+            ("a" "Appointment" checkitem (file+headline ,org-appointments-note-file "Appointments"))
+            ;; Groceries
+            ("g" "Groceries/Shopping" checkitem (file+headline ,org-appointments-note-file "Shopping"))
+            ;; Snippets (%x copies from clipboard)
+            ("s" "Code Snippet" entry (file+headline ,org-default-notes-file "Snippets")
+             "* %?\n#+BEGIN_SRC %^{prompt}\n%x\n#+END_SRC")
+            ;; Ideas
+            ("i" "Ideas" entry
+             (file+headline ,org-default-notes-file "Ideas")
+             "* %? %^G\n" :clock-in t :clock-resume t)
+            ;; Manpage
+            ("m" "Manpage" entry
+             (file+headline ,org-default-notes-file "Manpages")
+             "** %?\n\n capture date: %U\n")
+            ;; Note / Remember
+            ("n" "Note" entry
+             (file ,org-default-notes-file)
+             "* %?\n\n  capture date: %U\n" :empty-lines 1)))
+
+    ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+    (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                     (org-agenda-files :maxlevel . 9))))
+
+    (evil-leader/set-key-for-mode 'org-mode
+      "m*" 'org-ctrl-c-star
+      "m-" 'org-ctrl-c-minus)
+    ))
+
 ;; ORG MODE PUBLISHING
 (spacemacs|use-package-add-hook org
   :post-config
   (progn
     (setq org-publish-project-alist
           '(("org-zv"
-             :base-directory "~/z/zv.github.io/org/_posts"
+             :base-directory "~/Development/zv.github.com/org/_posts"
              :base-extension "org"
-             :publishing-directory "~/z/zv.github.io/_posts/"
+             :publishing-directory "~/Development/zv.github.com/_posts/"
              :publishing-function org-html-publish-to-html
              :html-container "section"
              :recursive t
