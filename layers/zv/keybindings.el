@@ -188,14 +188,11 @@
                                               `(lambda () (interactive) (find-file-existing ,path))))))
         key-file-map))
 
-(zv//initial-path-keybinding `(("fea" . "~/Development/quad/newadmin")
-                               ("feq" . "~/Development/quad")
-                               ("fez" . ,zv-configuration-layer-directory)
-                               ("fel" . "~/Development/practice/lang")
-                               ("feg" . "~/.gnus.el")
-                               ("fzd" . "~/Development/dotfilez")
-                               ("fer" . "~/.emacs.d/.ercrc.el")
-                               ("fzo" . ,org-directory)))
+(zv//initial-path-keybinding `(("fez" . ,zv-configuration-layer-directory)
+                               ("fzd" . "~/dotfilez")
+                               ("fzo" . ,org-directory)
+                               ("fzn" . ,(concat org-directory "/notes"))))
+
 
 ;; ---------------------------------------------------------------------------
 ;; mode bindings
