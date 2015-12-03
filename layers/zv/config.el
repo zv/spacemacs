@@ -222,7 +222,7 @@
           `(("t" "Tasks" entry (file+headline ,org-default-notes-file "Tasks")
              "* TODO %?\n" :clock-in t :clock-resume t)
             ;; Quotes
-            ("q" "Quotes" plain
+            ("k" "Quotes" plain
              (file (concat org-directory "quotes.org"))
              "#+BEGIN_QUOTE\n%?\n#+END_QUOTE" :empty-lines 1)
             ;; Appointment
@@ -249,6 +249,12 @@
     (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                      (org-agenda-files :maxlevel . 9))))
 
+    ;; Priorities
+    (setq org-highest-priority ?A
+          org-lowest-priority ?F
+          org-default-priority ?C)
+
+    ;; Org mode keybindings
     (evil-leader/set-key-for-mode 'org-mode
       "m*" 'org-ctrl-c-star
       "m-" 'org-ctrl-c-minus)
