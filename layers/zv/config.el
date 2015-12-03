@@ -197,10 +197,6 @@
     "q"    'Man-quit
     "m"    'man))
 
-
-()
-
-
 (spacemacs|use-package-add-hook org
   :post-config
   (progn
@@ -263,10 +259,10 @@
   :post-config
   (progn
     (setq org-publish-project-alist
-          '(("org-zv"
-             :base-directory "~/Development/zv.github.com/org/_posts"
+          `(("org-zv"
+             :base-directory ,(concat zv//blog-path "org/")
              :base-extension "org"
-             :publishing-directory "~/Development/zv.github.com/_posts/"
+             :publishing-directory ,zv//blog-path
              :publishing-function org-html-publish-to-html
              :html-container "section"
              :recursive t
@@ -275,9 +271,7 @@
              :html-extension "html"
              :html-html5-fancy t
              :body-only t)
-            ("zv-ghpages" :components ("org-zv"))))
-    ))
-
+            ("zv-ghpages" :components ("org-zv"))))))
 
 ;; -------------------------------------------------------------------------
 ;;; Emacs support for hacking on NetworkManager
@@ -341,5 +335,5 @@
 ; (dir-locals-set-directory-class "/home/danw/gnome/network-manager-applet/" 'nm)
 
 ;; -------------------------------------------------------------------------
-;;; 
+;;;
 ;; -------------------------------------------------------------------------

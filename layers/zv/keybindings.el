@@ -191,7 +191,8 @@
 (zv//initial-path-keybinding `(("fez" . ,zv-configuration-layer-directory)
                                ("fzd" . "~/dotfilez")
                                ("fzo" . ,org-directory)
-                               ("fzn" . ,(concat org-directory "/notes"))))
+                               ("fzn" . ,(concat org-directory "/notes"))
+                               ("fzb" . ,zv//blog-path)))
 
 
 ;; ---------------------------------------------------------------------------
