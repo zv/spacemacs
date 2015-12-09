@@ -204,6 +204,8 @@
     "q"    'Man-quit
     "m"    'man))
 
+
+
 (spacemacs|use-package-add-hook org
   :post-config
   (progn
@@ -255,6 +257,22 @@
     ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
     (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                      (org-agenda-files :maxlevel . 9))))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+             (dot . t)
+             (ditaa . t)
+             (R . t)
+             (python . t)
+             (ruby . t)
+             (gnuplot . t)
+             (clojure . t)
+             (sh . t)
+             (ledger . t)
+             (org . t)
+             (plantuml . t)
+             (latex . t)))
+
 
     ;; Priorities
     (setq org-highest-priority ?A
