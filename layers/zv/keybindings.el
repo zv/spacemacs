@@ -180,9 +180,12 @@
   "Create leader keybindings from an alist of the form (KEYS . PATH)"
   (mapc (lambda (binding)
           (let* ((path        (cdr binding))
-                 (keybinding  (car binding)))
-            (if (lookup-key evil-leader--default-map keybinding)
-                (warn "zv//initial-path-keybinding: %s is already bound" keybinding)
+                 (keybinding  (car binding))
+                 (keyseq (lookup-key evil-leader--default-map keybinding)))
+            ;; We check if it is an integer because keyseq returns a number if
+            ;; the preceeding keys are also unbound.
+            (if (and keyseq (not (integerp keyseq)))
+                (warn "zv//initial-path-keybinding: %s is already bound to %s" keybinding keyseq)
               (evil-leader/set-key keybinding (if (string-match "\/$" path)
                                                   ;; use ido-find-file-in-dir if we're binding a directory
                                                   `(lambda () (interactive) (ido-find-file-in-dir ,path))
@@ -196,7 +199,6 @@
                                ("fzn" . ,(concat org-directory "/notes"))
                                ("fzb" . ,zv//blog-path)
                                ("fzp" . ,(concat zv//blog-path "org/_posts/"))))
-
 
 ;; ---------------------------------------------------------------------------
 ;; mode bindings
