@@ -179,6 +179,13 @@
   :init
   (evil-set-initial-state 'Man-mode 'motion)
   :config
+  ;; Define our lookup funtion with `K' to be 'man' rather than 'woman'
+  (setq evil-lookup-func #'man)
+  (evil-define-motion evil-lookup ()
+    (call-interactively evil-lookup-func))
+  ;; Format our man pages with a width of 80 chars
+  (setenv "MANWIDTH" "80")
+
   (evil-define-key 'motion Man-mode-map
     " "    'scroll-up-command
     "\177" 'scroll-down-command
