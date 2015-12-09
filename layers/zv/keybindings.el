@@ -181,18 +181,21 @@
   (mapc (lambda (binding)
           (let* ((path        (cdr binding))
                  (keybinding  (car binding)))
-            (evil-leader/set-key keybinding (if (string-match "\/$" path)
-                                                ;; use ido-find-file-in-dir if we're binding a directory
-                                                `(lambda () (interactive) (ido-find-file-in-dir ,path))
-                                              ;; Otherwise we're looking at a file, jump directly to it
-                                              `(lambda () (interactive) (find-file-existing ,path))))))
+            (if (lookup-key evil-leader--default-map keybinding)
+                (warn "zv//initial-path-keybinding: %s is already bound" keybinding)
+              (evil-leader/set-key keybinding (if (string-match "\/$" path)
+                                                  ;; use ido-find-file-in-dir if we're binding a directory
+                                                  `(lambda () (interactive) (ido-find-file-in-dir ,path))
+                                                ;; Otherwise we're looking at a file, jump directly to it
+                                                `(lambda () (interactive) (find-file-existing ,path)))))))
         key-file-map))
 
 (zv//initial-path-keybinding `(("fez" . ,zv-configuration-layer-directory)
                                ("fzd" . "~/dotfilez")
                                ("fzo" . ,org-directory)
                                ("fzn" . ,(concat org-directory "/notes"))
-                               ("fzb" . ,zv//blog-path)))
+                               ("fzb" . ,zv//blog-path)
+                               ("fzp" . ,(concat zv//blog-path "org/_posts/"))))
 
 
 ;; ---------------------------------------------------------------------------
