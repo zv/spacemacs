@@ -48,6 +48,24 @@ used as the prefix command."
         (evil-window-vsplit)
       (evil-window-split))))
 
+
+;; Monkeypatch some spacemacs internal window positioning
+(defun spacemacs/shrink-window-horizontally (delta)
+  "Wrap `spacemacs/shrink-window-horizontally'."
+  (interactive "p") (shrink-window 10 t))
+
+(defun spacemacs/shrink-window (delta)
+  "Wrap `spacemacs/shrink-window'."
+  (interactive "p") (shrink-window 5))
+
+(defun spacemacs/enlarge-window (delta)
+  "Wrap `spacemacs/enlarge-window'."
+  (interactive "p") (enlarge-window 5))
+
+(defun spacemacs/enlarge-window-horizontally (delta)
+  "Wrap `spacemacs/enlarge-window-horizontally'."
+  (interactive "p") (enlarge-window 10 t))
+
 ;; Org Mode
 ;; --------
 
@@ -55,8 +73,7 @@ used as the prefix command."
   "Clever insertion of org item."
   (if (not (org-in-item-p))
       (insert "\n")
-    (org-insert-item))
-  )
+    (org-insert-item)))
 
 (defun evil-org-eol-call (fun)
   "Go to end of line and call provided function.
