@@ -215,11 +215,33 @@
 
     (setq org-agenda-files `("~/Documents" "~/Documents/SFGOV"))
 
+    ;; org-mode agenda options
     ;; Do not dim blocked tasks
     (setq org-agenda-dim-blocked-tasks nil)
-
     ;; Compact the block agenda view
     (setq org-agenda-compact-blocks t)
+    ;;open agenda in current window
+    (setq org-agenda-window-setup (quote current-window))
+    ;;warn me of any deadlines in next 7 days
+    (setq org-deadline-warning-days 7)
+    ;;show me tasks scheduled or due in next fortnight
+    (setq org-agenda-span (quote fortnight))
+    ;;don't show tasks as scheduled if they are already shown as a deadline
+    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+    ;;don't give awarning colour to tasks with impending deadlines
+    ;;if they are scheduled to be done
+    (setq org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled))
+    ;;don't show tasks that are scheduled or have deadlines in the
+    ;;normal todo list
+    (setq org-agenda-todo-ignore-deadlines (quote all))
+    (setq org-agenda-todo-ignore-scheduled (quote all))
+    ;;sort tasks in order of when they are due and then by priority
+    (setq org-agenda-sorting-strategy
+          (quote
+           ((agenda deadline-up priority-down)
+            (todo priority-down category-keep)
+            (tags priority-down category-keep)
+            (search category-keep))))
 
     ;; Catch edits to invisible sections of the screen
     (setq org-catch-invisible-edits t)
@@ -229,15 +251,15 @@
     ;; Files
     (setq org-capture-templates
           `(("t" "Tasks" entry (file+headline ,org-default-notes-file "Tasks")
-             "* TODO %?\n" :clock-in t :clock-resume t)
+             "* TODO [#A] %?\nSCHEDULED: %t\n")
             ;; Quotes
             ("k" "Quotes" plain
              (file (concat org-directory "quotes.org"))
              "#+BEGIN_QUOTE\n%?\n#+END_QUOTE" :empty-lines 1)
             ;; Appointment
-            ("a" "Appointment" checkitem (file+headline ,org-appointments-note-file "Appointments"))
-            ;; Groceries
-            ("g" "Groceries/Shopping" checkitem (file+headline ,org-appointments-note-file "Shopping"))
+            ("a" "Appointment" entry (file+headline ,org-appointments-note-file "Appointments")
+             "* APPT %^{Description} %^g
+%? ")
             ;; Snippets (%x copies from clipboard)
             ("s" "Code Snippet" entry (file+headline ,org-default-notes-file "Snippets")
              "* %?\n#+BEGIN_SRC %^{prompt}\n%x\n#+END_SRC")
@@ -245,18 +267,18 @@
             ("i" "Ideas" entry
              (file+headline ,org-default-notes-file "Ideas")
              "* %? %^G\n" :clock-in t :clock-resume t)
-            ;; Manpage
-            ("m" "Manpage" entry
-             (file+headline ,org-default-notes-file "Manpages")
+            ;; awesome list
+            ("m" "Awesome List" entry
+             (file+headline ,org-default-notes-file "awesome-list")
              "** %?\n\n capture date: %U\n")
             ;; Note / Remember
             ("n" "Note" entry
              (file ,org-default-notes-file)
              "* %?\n\n  capture date: %U\n" :empty-lines 1)))
 
-    ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-    (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                     (org-agenda-files :maxlevel . 9))))
+    ;; Targets include this file and any file contributing to the agenda - up to 6 levels deep
+    (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((emacs-lisp . t)
