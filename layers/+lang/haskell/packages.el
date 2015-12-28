@@ -96,7 +96,7 @@
         "mgg"  'haskell-mode-jump-to-def-or-tag
         "mf"   'haskell-mode-stylish-buffer
 
-        "msb"  'haskell-process-load-or-reload
+        "msb"  'haskell-process-load-file
         "msc"  'haskell-interactive-mode-clear
         "mss"  'haskell-interactive-bring
         "msS"  'haskell-interactive-switch
@@ -213,7 +213,7 @@
     (progn
       (setq hindent-style haskell-enable-hindent-style)
       (evil-leader/set-key-for-mode 'haskell-mode
-        "mF" 'hindent/reformat-decl))))
+        "mF" 'hindent-reformat-decl))))
 
 (defun haskell/init-shm ()
   (use-package shm
