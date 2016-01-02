@@ -119,7 +119,7 @@
 (eval-after-load 'calendar
   '(progn
      (evil-set-initial-state 'calendar-mode 'emacs)
-     (setq diary-file (concat org-directory "appointments"))
+     (setq diary-file (concat org-directory "events"))
      (add-hook 'calendar-mode-hook
                (lambda ()
                  (define-key calendar-mode-map "l" 'calendar-forward-day)
@@ -209,9 +209,10 @@
 (spacemacs|use-package-add-hook org
   :post-config
   (progn
-    ;; (spacemacs|disable-company org-mode)
+    ;; Use our custom org link insertion code
+    (org-defkey org-mode-map "\C-c\C-l" 'zv/org-insert-link)
+
     (setq org-default-notes-file (expand-file-name "~/Documents/notes.org"))
-    (setq org-appointments-note-file (expand-file-name "~/Documents/appointments_and_shopping.org"))
 
     (setq org-agenda-files `("~/Documents" "~/Documents/SFGOV"))
 
@@ -243,23 +244,24 @@
             (tags priority-down category-keep)
             (search category-keep))))
 
+    (setq org-todo-keywords '((sequence "TODO" "STARTED" "DONE")))
+
+    ;; include the emacs diary
+    (setq org-agenda-include-diary t)
     ;; Catch edits to invisible sections of the screen
     (setq org-catch-invisible-edits t)
     ;; When running babel blocks in sh, I usually mean `zsh'
     (setq org-babel-sh-command "zsh")
 
+    ;; APPT_WARNTIME property
     ;; Files
     (setq org-capture-templates
-          `(("t" "Tasks" entry (file+headline ,org-default-notes-file "Tasks")
+          `(("t" "Tasks" entry (file+headline ,(concat org-directory "tasks.org") "Tasks")
              "* TODO [#A] %?\nSCHEDULED: %t\n")
             ;; Quotes
             ("k" "Quotes" plain
              (file (concat org-directory "quotes.org"))
              "#+BEGIN_QUOTE\n%?\n#+END_QUOTE" :empty-lines 1)
-            ;; Appointment
-            ("a" "Appointment" entry (file+headline ,org-appointments-note-file "Appointments")
-             "* APPT %^{Description} %^g
-%? ")
             ;; Snippets (%x copies from clipboard)
             ("s" "Code Snippet" entry (file+headline ,org-default-notes-file "Snippets")
              "* %?\n#+BEGIN_SRC %^{prompt}\n%x\n#+END_SRC")

@@ -194,7 +194,8 @@
         key-file-map))
 
 (zv//initial-path-keybinding `(("fez" . ,zv-configuration-layer-directory)
-                               ("fzd" . "~/dotfilez")
+                               ("fel" . "~/Development/")
+                               ("fzd" . "~/dotfilez/")
                                ("fzo" . ,org-directory)
                                ("fzn" . ,(concat org-directory "/notes"))
                                ("fzb" . ,zv//blog-path)

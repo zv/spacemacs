@@ -2,6 +2,8 @@
 (defun spacemacs/goto-link-line ())
 (defun spacemacs//insert-banner ())
 
+(require 'mm-url) ; to include mm-url-decode-entities-string
+
 ;; erc
 (defun erc-connect ()
   "Connect to IRC."
@@ -48,7 +50,6 @@ used as the prefix command."
         (evil-window-vsplit)
       (evil-window-split))))
 
-
 ;; Monkeypatch some spacemacs internal window positioning
 (defun spacemacs/shrink-window-horizontally (delta)
   "Wrap `spacemacs/shrink-window-horizontally'."
@@ -81,6 +82,27 @@ FUN function callback"
   (end-of-line)
   (funcall fun)
   (evil-append nil))
+
+;; Sets an org-mode link's default text to be that of the page's title
+(defun zv/org-insert-link ()
+  "Insert org link where default description is set to html title."
+  (interactive)
+  (let* ((url (read-string "URL: "))
+         (title (zv//get-html-title-from-url url)))
+    (if title
+        (org-insert-link nil url title)
+      (org-insert-link))))
+
+(defun zv//get-html-title-from-url (url)
+  "Return content in <title> tag."
+  (let (x1 x2 (download-buffer (url-retrieve-synchronously url)))
+    (save-excursion
+      (set-buffer download-buffer)
+      (beginning-of-buffer)
+      (setq x1 (search-forward "<title>"))
+      (search-forward "</title>")
+      (setq x2 (search-backward "<"))
+      (mm-url-decode-entities-string (buffer-substring-no-properties x1 x2)))))
 
 ;; Restart `tern-mode`
 (defun delete-tern-process ()
