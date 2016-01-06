@@ -383,12 +383,6 @@ Will work on both org-mode and any mode that accepts plain html."
     :body
     (find-file (first org-agenda-files))))
 
-(defun org/post-init-persp-mode ()
-  (spacemacs|define-custom-layout "@Org"
-    :binding "o"
-    :body
-    (find-file (first org-agenda-files))))
-
 (defun org/init-toc-org ()
   (use-package toc-org
     :defer t
