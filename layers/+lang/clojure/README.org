@@ -1,4 +1,5 @@
-#+TITLE: Clojure contribution layer for Spacemacs
+#+TITLE: Clojure layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/clojure.png]] [[file:img/cider.png]]
 
@@ -36,13 +37,13 @@ This layer adds support for [[http://clojure.org][Clojure]] language using [[htt
 * Features
 
 - REPL via [[https://github.com/clojure-emacs/cider][CIDER]]
+- Code formatting via [[https://github.com/clojure-emacs/cider][CIDER]] using [[https://github.com/weavejester/cljfmt][Cljfmt]] 
 - Refactoring via [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor]]
-- Automatic formatting via [[https://github.com/gstamp/align-cljlet][align-cljlet]]
+- Aligning of code forms via [[https://github.com/gstamp/align-cljlet][align-cljlet]]
   
 * Install
 
 ** Layer
-
 To use this contribution add it to your =~/.spacemacs=
 
 #+BEGIN_SRC emacs-lisp
@@ -50,7 +51,6 @@ To use this contribution add it to your =~/.spacemacs=
 #+END_SRC
 
 ** Pretty Symbols
-
 Pretty symbols for anonymous functions, set literals and partial, like =(λ [a]
 (+ a 5))=, =ƒ(+ % 5)=, =∈{2 4 6}= and =Ƥ=.
 
@@ -69,32 +69,53 @@ Or set this variable when loading the configuration layer:
 
 ** CIDER and clj-refactor
 
-*** Quick Start with lein
+*** Quick Start with boot
+- Install =boot= (see https://github.com/boot-clj/boot#install)
+- Create a file =~/.boot/profile.boot= with the following content:
 
+#+BEGIN_SRC clojure
+(require 'boot.repl)
+
+(swap! boot.repl/*default-dependencies* conj
+       '[refactor-nrepl "1.2.0-SNAPSHOT"]
+       '[cider/cider-nrepl "0.10.0-SNAPSHOT"])
+
+(swap! boot.repl/*default-middleware* conj
+       'refactor-nrepl.middleware/wrap-refactor)
+#+END_SRC
+
+- Run ~SPC m s i~ in any of the clojure source files to connect to the CIDER REPL.
+
+*** Quick Start with lein
 - Install =lein= via your OS package manager.
 - Create a file =~/.lein/profiles.clj= with the following content:
   
 #+BEGIN_SRC clojure
-  {:user {:plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
-                    [refactor-nrepl "1.2.0-SNAPSHOT"]]
+  {:repl {:plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
+                    [refactor-nrepl "2.0.0-SNAPSHOT"]]
           :dependencies [[alembic "0.3.2"]
-                         [org.clojure/tools.nrepl "0.2.10"]]}}
+                         [org.clojure/tools.nrepl "0.2.12"]]}}
 #+END_SRC
 
 - After creating your project with ~lein new app <projectname>~ or
   importing an existing project, run ~SPC m s i~ in any of the clojure
-  source files to connect to the Cider REPL.
+  source files to connect to the CIDER REPL.
 
 *** More details
-
 More info regarding installation of nREPL middleware can be found here:
 - CIDER: [[https://github.com/clojure-emacs/cider#installation][cider_install]]
 - clj-refactor: [[https://github.com/clojure-emacs/refactor-nrepl][refactor-nrepl]]
   
 * Key Bindings
+** Working with clojure files (barfage, slurpage & more)
+Spacemacs comes with a special ~lisp-state~ for working with lisp code that
+supports slurpage, barfage and more tools you'll likely want when working with
+lisp.
+
+As this state works the same for all files, the documentation is in global
+[[https://github.com/syl20bnr/spacemacs/blob/master/doc/DOCUMENTATION.org#lisp-key-bindings][DOCUMENTATION.org]]. In general, use ~SPC k~ to interact with the lisp-state.
 
 ** Leader
-
 *** Documentation
 
 | Key Binding | Description    |
@@ -134,6 +155,7 @@ More info regarding installation of nREPL middleware can be found here:
 | ~SPC m s f~ | send and eval function in REPL                               |
 | ~SPC m s F~ | send and eval function and switch to REPL in =insert state=  |
 | ~SPC m s i~ | start REPL (cider-jack-in)                                   |
+| ~SPC m s I~ | start clojurescript REPL (cider-jack-in-clojurescript)       |
 | ~SPC m s n~ | send and eval ns form in REPL                                |
 | ~SPC m s N~ | send and eval ns form and switch to REPL in =insert state=   |
 | ~SPC m s q~ | kill REPL (cider-quit)                                       |
@@ -153,18 +175,18 @@ More info regarding installation of nREPL middleware can be found here:
 
 | Key Binding | Description                 |
 |-------------+-----------------------------|
-| ~SPC m T f~   | toggle REPL font-locking    |
-| ~SPC m T p~   | toggle REPL pretty-printing |
-| ~SPC m T i~   | toggle indentation style    |
+| ~SPC m T f~ | toggle REPL font-locking    |
+| ~SPC m T p~ | toggle REPL pretty-printing |
+| ~SPC m T i~ | toggle indentation style    |
 
 *** Debugging
 
 | Key Binding | Description                    |
 |-------------+--------------------------------|
-| ~SPC m d r~   | reload namepspaces             |
-| ~SPC m d b~   | instrument expression at point |
-| ~SPC m d e~   | display last stacktrace        |
-| ~SPC m d i~   | inspect expression at point    |
+| ~SPC m d r~ | reload namepspaces             |
+| ~SPC m d b~ | instrument expression at point |
+| ~SPC m d e~ | display last stacktrace        |
+| ~SPC m d i~ | inspect expression at point    |
 
 *** Refactoring
 
@@ -182,8 +204,9 @@ More info regarding installation of nREPL middleware can be found here:
 | ~SPC m r c n~ | clean ns                    |
 | ~SPC m r c p~ | cycle privacy               |
 | ~SPC m r d k~ | destructure keys            |
-| ~SPC m r e f~ | extract function            |
 | ~SPC m r e c~ | extract constant            |
+| ~SPC m r e d~ | extract definition          |
+| ~SPC m r e f~ | extract function            |
 | ~SPC m r e l~ | expand let                  |
 | ~SPC m r f u~ | find usages                 |
 | ~SPC m r f e~ | create fn from example      |
@@ -212,8 +235,7 @@ More info regarding installation of nREPL middleware can be found here:
 | ~SPC m r u w~ | unwind                      |
 
 *** Reformatting
-
-- Forms currently handled:
+Forms currently handled:
   - let
   - when-let
   - if-let
@@ -227,12 +249,12 @@ More info regarding installation of nREPL middleware can be found here:
   
 More info at [[https://github.com/gstamp/align-cljlet][align-cljlet]].
 
-| Key Binding | Description           |
-|-------------+-----------------------|
-| ~SPC m f l~ | reformat current form |
+| Key Binding | Description             |
+|-------------+-------------------------|
+| ~SPC m f l~ | realign current form    |
+| ~SPC m f b~ | reformat current buffer |
 
 ** CIDER Buffers
-
 In general, ~q~ should always quit the popped up buffer.
 
 *** stacktrace-mode

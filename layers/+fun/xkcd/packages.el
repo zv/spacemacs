@@ -20,10 +20,10 @@
       (setq xkcd-cache-dir (concat spacemacs-cache-directory "xkcd/"))
       (when (not (file-directory-p xkcd-cache-dir))
         (make-directory xkcd-cache-dir))
-      (evil-leader/set-key
+      (spacemacs/set-leader-keys
         "ax" 'xkcd)
-      (evilify xkcd-mode xkcd-mode-map
-               "h" 'xkcd-prev
-               "j" 'xkcd-next
-               "k" 'xkcd-prev
-               "l" 'xkcd-next))))
+      (evilified-state-evilify xkcd-mode xkcd-mode-map
+        "h" 'xkcd-prev
+        "j" 'xkcd-next
+        "k" 'xkcd-prev
+        "l" 'xkcd-next))))

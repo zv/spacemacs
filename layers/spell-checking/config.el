@@ -10,11 +10,14 @@
 ;;
 ;;; License: GPLv3
 
-;; Variables
-
 ;; Command Prefixes
 
 (spacemacs/declare-prefix "S" "spelling")
 
+;; Variables
+
 (defvar spell-checking-enable-by-default t
   "Enable spell checking by default.")
+
+(defvar spell-checking-enable-auto-dictionary nil
+  "Specify if auto-dictionary should be enabled or not.")

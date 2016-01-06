@@ -15,6 +15,7 @@
         gist
         git-link
         github-browse-file
+        github-clone
         ;; not up to date
         ;; helm-gist
         magit-gh-pulls
@@ -25,12 +26,11 @@
     :defer t
     :init
     (progn
-      (evilify gist-list-mode gist-list-menu-mode-map
-               "f" 'gist-fetch-current
-               "K" 'gist-kill-current
-               "o" 'gist-browse-current-url)
-
-      (evil-leader/set-key
+      (evilified-state-evilify gist-list-mode gist-list-menu-mode-map
+        "f" 'gist-fetch-current
+        "K" 'gist-kill-current
+        "o" 'gist-browse-current-url)
+      (spacemacs/set-leader-keys
         "ggb" 'gist-buffer
         "ggB" 'gist-buffer-private
         "ggl" 'gist-list
@@ -52,15 +52,22 @@
 ;;         (egist-mode)
 ;;         (helm-for-gist))
 
-;;       (evil-leader/set-key "ggh" 'spacemacs/helm-gist-list))
+;;       (spacemacs/set-leader-keys "ggh" 'spacemacs/helm-gist-list))
 ;;     ))
 
 (defun github/init-github-browse-file ()
   (use-package github-browse-file
     :defer t
     :init
-    (evil-leader/set-key
-      "gfb" 'github-browse-file)))
+    (spacemacs/set-leader-keys
+      "gho" 'github-browse-file)))
+
+(defun github/init-github-clone ()
+  (use-package github-clone
+    :defer t
+    :init
+    (spacemacs/set-leader-keys
+      "gh C-c" 'github-clone)))
 
 (defun github/init-git-link ()
   (use-package git-link
@@ -80,11 +87,11 @@
         (let (git-link-open-in-browser)
           (call-interactively 'git-link-commit)))
 
-      (evil-leader/set-key
-        "gfl" 'git-link
-        "gfL" 'spacemacs/git-link-copy-url-only
-        "gfc" 'git-link-commit
-        "gfC" 'spacemacs/git-link-commit-copy-url-only)
+      (spacemacs/set-leader-keys
+        "ghl" 'git-link
+        "ghL" 'spacemacs/git-link-copy-url-only
+        "ghc" 'git-link-commit
+        "ghC" 'spacemacs/git-link-commit-copy-url-only)
       ;; default is to open the generated link
       (setq git-link-open-in-browser t))))
 
@@ -105,15 +112,8 @@
             "Start `magit-gh-pulls-mode' only after a manual request."
             (interactive)
             (magit-gh-pulls-mode)
-            (magit-gh-pulls-reload))
+            (magit-gh-pulls-popup))
 
-          (defun spacemacs/fetch-gh-pulls-mode ()
-            "Start `magit-gh-pulls-mode' only after a manual request."
-            (interactive)
-            (magit-gh-pulls-mode)
-            (magit-gh-pulls-fetch-commits))
-
-          (define-key magit-mode-map "#gf" 'spacemacs/fetch-gh-pulls-mode)
-          (define-key magit-mode-map "#gg" 'spacemacs/load-gh-pulls-mode))
+          (define-key magit-mode-map "#" 'spacemacs/load-gh-pulls-mode))
         :config
         (spacemacs|diminish magit-gh-pulls-mode "Github-PR")))))

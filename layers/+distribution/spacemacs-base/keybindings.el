@@ -18,12 +18,6 @@
 ;; improve delete-other-windows
 (define-key global-map (kbd "C-x 1") 'spacemacs/toggle-maximize-buffer)
 
-;; replace `dired-goto-file' with `helm-find-files', since `helm-find-files'
-;; can do the same thing and with fuzzy matching and other features.
-(with-eval-after-load 'dired
-  (evil-define-key 'normal dired-mode-map "J" 'spacemacs/helm-find-files)
-  (define-key dired-mode-map "j" 'spacemacs/helm-find-files))
-
 ;; alternate binding to search next occurrence with isearch without
 ;; exiting isearch
 (define-key isearch-mode-map (kbd "S-<return>") 'isearch-repeat-forward)
@@ -33,7 +27,6 @@
 
 ;; Make <escape> quit as much as possible
 (define-key minibuffer-local-map (kbd "<escape>") 'keyboard-escape-quit)
-(define-key evil-visual-state-map (kbd "<escape>") 'keyboard-quit)
 (define-key minibuffer-local-ns-map (kbd "<escape>") 'keyboard-escape-quit)
 (define-key minibuffer-local-completion-map (kbd "<escape>") 'keyboard-escape-quit)
 (define-key minibuffer-local-must-match-map (kbd "<escape>") 'keyboard-escape-quit)
@@ -46,25 +39,26 @@
 (global-set-key (kbd "<left-margin> <drag-mouse-1>") 'spacemacs/mu-select-linum)
 
 ;; ---------------------------------------------------------------------------
-;; evil-leader key bindings
+;; spacemacs leader key bindings
 ;; ---------------------------------------------------------------------------
 
 ;; Universal argument ---------------------------------------------------------
-(evil-leader/set-key "u" 'universal-argument)
+(spacemacs/set-leader-keys "u" 'universal-argument)
 (when (memq dotspacemacs-editing-style '(vim hybrid))
   (define-key universal-argument-map
     (kbd (concat dotspacemacs-leader-key " u"))
     'universal-argument-more))
 ;; shell command  -------------------------------------------------------------
-(evil-leader/set-key "!" 'shell-command)
+(spacemacs/set-leader-keys "!" 'shell-command)
 ;; applications ---------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "ac"  'calc-dispatch
   "ad"  'dired
-  "ap"  'proced
+  "ap"  'list-processes
+  "aP"  'proced
   "au"  'undo-tree-visualize)
 ;; buffers --------------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "bd"  'kill-this-buffer
   "TAB" 'spacemacs/alternate-buffer
   "bh"  'spacemacs/home
@@ -76,10 +70,11 @@
   "bn"  'spacemacs/next-useful-buffer
   "bp"  'spacemacs/previous-useful-buffer
   "bR"  'spacemacs/safe-revert-buffer
+  "bs"  'spacemacs/switch-to-scratch-buffer
   "bY"  'spacemacs/copy-whole-buffer-to-clipboard
   "bw"  'read-only-mode)
 ;; Cycling settings -----------------------------------------------------------
-(evil-leader/set-key "Tn" 'spacemacs/cycle-spacemacs-theme)
+(spacemacs/set-leader-keys "Tn" 'spacemacs/cycle-spacemacs-theme)
 ;; describe functions ---------------------------------------------------------
 (defmacro spacemacs||set-helm-key (keys func)
   "Define a key bindings for FUNC using KEYS.
@@ -92,27 +87,28 @@ Ensure that helm is required before calling FUNC."
          (interactive)
          (require 'helm)
          (call-interactively ',func))
-       (evil-leader/set-key ,keys ',func-name))))
+       (spacemacs/set-leader-keys ,keys ',func-name))))
 (spacemacs||set-helm-key "hdb" describe-bindings)
 (spacemacs||set-helm-key "hdc" describe-char)
 (spacemacs||set-helm-key "hdf" describe-function)
 (spacemacs||set-helm-key "hdk" describe-key)
 (spacemacs||set-helm-key "hdm" describe-mode)
 (spacemacs||set-helm-key "hdp" describe-package)
-(evil-leader/set-key "hds" 'spacemacs/describe-system-info)
+(spacemacs/set-leader-keys "hds" 'spacemacs/describe-system-info)
 (spacemacs||set-helm-key "hdt" describe-theme)
 (spacemacs||set-helm-key "hdv" describe-variable)
+(spacemacs||set-helm-key "hn"  view-emacs-news)
 (spacemacs||set-helm-key "hL"  helm-locate-library)
 ;; search functions -----------------------------------------------------------
 (spacemacs||set-helm-key "sww" helm-wikipedia-suggest)
 (spacemacs||set-helm-key "swg" helm-google-suggest)
 ;; errors ---------------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "en" 'spacemacs/next-error
   "ep" 'spacemacs/previous-error
   "eN" 'spacemacs/previous-error)
 ;; file -----------------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "fc" 'spacemacs/copy-file
   "fD" 'spacemacs/delete-current-buffer-file
   "fei" 'spacemacs/find-user-init-file
@@ -125,13 +121,17 @@ Ensure that helm is required before calling FUNC."
   "fg" 'rgrep
   "fj" 'dired-jump
   "fl" 'find-file-literally
+  "fE" 'spacemacs/sudo-edit
   "fo" 'spacemacs/open-in-external-app
   "fR" 'spacemacs/rename-current-buffer-file
   "fS" 'evil-write-all
-  "fs" 'spacemacs/write-file
+  "fs" 'save-buffer
+  "fvd" 'add-dir-local-variable
+  "fvf" 'add-file-local-variable
+  "fvp" 'add-file-local-variable-prop-line
   "fy" 'spacemacs/show-and-copy-buffer-filename)
 ;; insert stuff ---------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "iJ" 'spacemacs/insert-line-below-no-indent
   "iK" 'spacemacs/insert-line-above-no-indent
   "ik" 'spacemacs/evil-insert-line-above
@@ -139,23 +139,26 @@ Ensure that helm is required before calling FUNC."
 ;; format ---------------------------------------------------------------------
 ;; <SPC> j k key binding for a frequent action: go and indent line below the point
 ;; <SPC> J split the current line at point and indent it
-(evil-leader/set-key
-  "J"  'sp-split-sexp
-  "jj" 'sp-newline
+(spacemacs/set-leader-keys
   "jo" 'open-line
   "j=" 'spacemacs/indent-region-or-buffer
   "jJ" 'spacemacs/split-and-new-line
   "jk" 'spacemacs/evil-goto-next-line-and-indent)
 
 ;; navigation -----------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "jh" 'spacemacs/push-mark-and-goto-beginning-of-line
   "jl" 'spacemacs/push-mark-and-goto-end-of-line)
+
 ;; Compilation ----------------------------------------------------------------
-(evil-leader/set-key "cC" 'compile)
-(evil-leader/set-key "cr" 'recompile)
+(spacemacs/set-leader-keys
+  "cC" 'compile
+  "ck" 'kill-compilation
+  "cr" 'recompile
+  "cq" 'spacemacs/close-compilation-window)
+
 ;; narrow & widen -------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "nr" 'narrow-to-region
   "np" 'narrow-to-page
   "nf" 'narrow-to-defun
@@ -168,8 +171,9 @@ Ensure that helm is required before calling FUNC."
   :documentation "Globally highlight the current line."
   :evil-leader "thh")
 (spacemacs|add-toggle truncate-lines
-  :status nil
+  :status truncate-lines
   :on (toggle-truncate-lines)
+  :off (toggle-truncate-lines -1)
   :documentation "Truncate long lines (no wrap)."
   :evil-leader "tl")
 (spacemacs|add-toggle visual-line-navigation
@@ -198,8 +202,8 @@ Ensure that helm is required before calling FUNC."
   :evil-leader "tL")
 (spacemacs|add-toggle line-numbers
   :status linum-mode
-  :on (global-linum-mode)
-  :off (global-linum-mode -1)
+  :on (linum-mode)
+  :off (linum-mode -1)
   :documentation "Show the line numbers."
   :evil-leader "tn")
 (spacemacs|add-toggle auto-fill-mode
@@ -209,8 +213,9 @@ Ensure that helm is required before calling FUNC."
   :documentation "Break line beyond `current-fill-column` while editing."
   :evil-leader "tF")
 (spacemacs|add-toggle debug-on-error
-  :status nil
-  :on (toggle-debug-on-error)
+  :status debug-on-error
+  :on (setq debug-on-error t)
+  :off (setq debug-on-error nil)
   :documentation "Toggle display of backtrace when an error happens."
   :evil-leader "tD")
 (spacemacs|add-toggle fringe
@@ -231,9 +236,9 @@ Ensure that helm is required before calling FUNC."
   :documentation "Maximize the current frame."
   :evil-leader "TM")
 (spacemacs|add-toggle mode-line
-  :status hidden-mode-line-mode
-  :on (hidden-mode-line-mode)
-  :off (hidden-mode-line-mode -1)
+  :status (not hidden-mode-line-mode)
+  :on (hidden-mode-line-mode -1)
+  :off (hidden-mode-line-mode)
   :documentation "Toggle the visibility of modeline."
   :evil-leader "tmt")
 (spacemacs|add-toggle transparent-frame
@@ -268,7 +273,7 @@ Ensure that helm is required before calling FUNC."
   :documentation "Enable semantic-stickyfunc globally."
   :evil-leader "T C-s")
 ;; quit -----------------------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "qs" 'spacemacs/save-buffers-kill-emacs
   "qq" 'spacemacs/prompt-kill-emacs
   "qQ" 'spacemacs/kill-emacs
@@ -292,7 +297,7 @@ Ensure that helm is required before calling FUNC."
              (symbol-value golden-ratio-mode))
     (golden-ratio)))
 
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "w2"  'spacemacs/layout-double-columns
   "w3"  'spacemacs/layout-triple-columns
   "wb"  'spacemacs/switch-to-minibuffer-window
@@ -329,7 +334,9 @@ Ensure that helm is required before calling FUNC."
   "w/"  'split-window-right
   "w="  'balance-windows)
 ;; text -----------------------------------------------------------------------
-(evil-leader/set-key
+(defalias 'count-region 'count-words-region)
+
+(spacemacs/set-leader-keys
   "xaa" 'align
   "xar" 'spacemacs/align-repeat
   "xam" 'spacemacs/align-repeat-math-oper
@@ -342,6 +349,7 @@ Ensure that helm is required before calling FUNC."
   "xa|" 'spacemacs/align-repeat-bar
   "xa(" 'spacemacs/align-repeat-left-paren
   "xa)" 'spacemacs/align-repeat-right-paren
+  "xc"  'count-region
   "xdw" 'delete-trailing-whitespace
   "xls" 'spacemacs/sort-lines
   "xlu" 'spacemacs/uniquify-lines
@@ -350,10 +358,9 @@ Ensure that helm is required before calling FUNC."
   "xtw" 'transpose-words
   "xU"  'upcase-region
   "xu"  'downcase-region
-  "xwC" 'spacemacs/count-words-analysis
-  "xwc" 'count-words-region)
+  "xwc" 'spacemacs/count-words-analysis)
 ;; google translate -----------------------------------------------------------
-(evil-leader/set-key
+(spacemacs/set-leader-keys
   "xgl" 'spacemacs/set-google-translate-languages)
 ;; shell ----------------------------------------------------------------------
 (with-eval-after-load 'shell
@@ -446,7 +453,7 @@ Ensure that helm is required before calling FUNC."
 
 (defun spacemacs//window-manipulation-gratio-doc ()
   "Help string for golden ratio"
-  (format "(golden-ration %s) toggle with [g]"
+  (format "(golden-ratio %s) toggle with [g]"
           (if (symbol-value golden-ratio-mode) "enabled" "disabled")))
 
 (spacemacs|define-micro-state window-manipulation
@@ -531,12 +538,13 @@ otherwise it is scaled down."
   (spacemacs/scale-up-or-down-font-size 0))
 
 (spacemacs|define-micro-state scale-font
-  :doc "[+] scale up [-] scale down [=] reset font [q]uit"
+  :doc "[+/=] scale up [-] scale down [0] reset font [q]uit"
   :evil-leader "zx"
   :bindings
   ("+" spacemacs/scale-up-font)
+  ("=" spacemacs/scale-up-font)
   ("-" spacemacs/scale-down-font)
-  ("=" spacemacs/reset-font-size)
+  ("0" spacemacs/reset-font-size)
   ("q" nil :exit t))
 
 ;; end of Text Manipulation Micro State
@@ -546,15 +554,14 @@ otherwise it is scaled down."
 (defun spacemacs/toggle-transparency ()
   "Toggle between transparent or opaque display."
   (interactive)
-  ;; Define alpha if it's nil
-  (if (eq (frame-parameter (selected-frame) 'alpha) nil)
-      (set-frame-parameter (selected-frame) 'alpha '(100 100)))
-  ;; Do the actual toggle
-  (if (/= (cadr (frame-parameter (selected-frame) 'alpha)) 100)
-      (set-frame-parameter (selected-frame) 'alpha '(100 100))
-    (set-frame-parameter (selected-frame) 'alpha
-                         (list dotspacemacs-active-transparency
-                               dotspacemacs-inactive-transparency)))
+  (let* ((frame (selected-frame))
+         (alpha (frame-parameter frame 'alpha)))
+    (set-frame-parameter
+     frame 'alpha
+     (if (or (null alpha) (= (cdr-safe alpha) 100))
+         (cons dotspacemacs-active-transparency
+               dotspacemacs-inactive-transparency)
+       '(100 . 100))))
   ;; Immediately enter the micro-state, but also keep toggle
   ;; accessible from helm-spacemacs
   (spacemacs/scale-transparency-micro-state))
@@ -565,7 +572,8 @@ otherwise it is scaled down."
   (let* ((current-alpha (car (frame-parameter (selected-frame) 'alpha)))
          (increased-alpha (- current-alpha 5)))
     (when (>= increased-alpha frame-alpha-lower-limit)
-      (set-frame-parameter (selected-frame) 'alpha (list increased-alpha increased-alpha)))))
+      (set-frame-parameter (selected-frame) 'alpha
+                           (cons increased-alpha increased-alpha)))))
 
 (defun spacemacs/decrease-transparency ()
   "Decrease transparency of current frame."
@@ -573,7 +581,8 @@ otherwise it is scaled down."
   (let* ((current-alpha (car (frame-parameter (selected-frame) 'alpha)))
          (decreased-alpha (+ current-alpha 5)))
     (when (<= decreased-alpha 100)
-      (set-frame-parameter (selected-frame) 'alpha (list decreased-alpha decreased-alpha)))))
+      (set-frame-parameter (selected-frame) 'alpha
+                           (cons decreased-alpha decreased-alpha)))))
 
 (spacemacs|define-micro-state scale-transparency
   :doc "[+] increase [-] decrease [T] toggle transparency [q] quit"

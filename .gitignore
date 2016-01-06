@@ -1,5 +1,6 @@
 auto-save-list/
 elpa/
+export/
 ac-comphist.dat
 eproject.lst
 .smex-items
@@ -38,6 +39,7 @@ server/
 /*.zip
 *.db
 python-*-docs-html
+/.cask/
 
 # Private directory
 private/*

@@ -15,11 +15,14 @@
 ;; Company-mode LaTeX-backend
 (spacemacs|defvar-company-backends LaTeX-mode)
 
-(defvar latex-build-command "LaTeX"
+(defvar latex-build-command (if (executable-find "latexmk") "LatexMk" "LaTeX")
   "The default command to use with `SPC m b'")
 
 (defvar latex-enable-auto-fill t
   "Whether to use auto-fill-mode or not in tex files.")
+
+(defvar latex-enable-folding nil
+  "Whether to use `TeX-fold-mode' or not in tex/latex buffers.")
 
 (defvar latex-nofill-env '("equation"
                            "equation*"

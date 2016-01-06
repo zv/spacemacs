@@ -142,6 +142,8 @@
     (zonokai-red  . zonokai-theme)
     (tao-yin . tao-theme)
     (tao-yang . tao-theme)
+    (farmhouse-light . farmhouse-theme)
+    (farmhouse-dark . farmhouse-theme)
     )
   "alist matching a theme name with its package name, required when
 package name does not match theme name + `-theme' suffix.")
@@ -168,26 +170,6 @@ package name does not match theme name + `-theme' suffix.")
   ;; Unless Emacs stock themes
   (unless (memq theme (custom-available-themes))
     (cond
-     ;; official spacemacs theme
-     ((or (eq 'spacemacs-light theme)
-          (eq 'spacemacs-dark theme))
-      (spacemacs/load-or-install-package 'spacemacs-theme)
-      (add-to-list 'load-path (spacemacs//get-package-directory
-                               'spacemacs-theme))
-      (require 'spacemacs-common)
-      (deftheme spacemacs-dark "Spacemacs theme, the dark version")
-      (deftheme spacemacs-light "Spacemacs theme, the light version"))
-     ;; solarized theme
-     ((or (eq 'solarized-light theme)
-          (eq 'solarized-dark theme))
-      (add-to-list 'load-path
-                   (concat configuration-layer-directory
-                           "+distribution/spacemacs/local/solarized-theme/"))
-      (require 'solarized)
-      (deftheme solarized-dark
-        "The dark variant of the Solarized colour theme")
-      (deftheme solarized-light
-        "The light variant of the Solarized colour theme"))
      ;; themes with explicitly declared package names
      ((assq theme spacemacs-theme-name-to-package)
       (let* ((pkg (spacemacs//get-theme-package theme))
@@ -203,23 +185,31 @@ package name does not match theme name + `-theme' suffix.")
       ;; if not we will handle the special themes as we get issues in the tracker.
       (let ((pkg (spacemacs//get-theme-package theme)))
         (spacemacs/load-or-install-package pkg)))))
-  (load-theme theme t))
+  (load-theme theme t)
+  ;; explicitly reload the theme for the first GUI client
+  (eval `(spacemacs|do-after-display-system-init
+          (load-theme ',theme t))))
 
 (defun spacemacs/cycle-spacemacs-theme ()
   "Cycle through themes defined in `dotspacemacs-themes.'"
   (interactive)
-  (when  spacemacs--cur-theme
+  (when spacemacs--cur-theme
     (disable-theme spacemacs--cur-theme)
+    ;; if current theme isn't in cycleable themes, start over
     (setq spacemacs--cycle-themes
-          (append spacemacs--cycle-themes (list spacemacs--cur-theme))))
-  (setq  spacemacs--cur-theme (pop spacemacs--cycle-themes))
+          (or (cdr (memq spacemacs--cur-theme dotspacemacs-themes))
+              dotspacemacs-themes)))
+  (setq spacemacs--cur-theme (pop spacemacs--cycle-themes))
   (message "Loading theme %s..." spacemacs--cur-theme)
   (spacemacs/load-theme spacemacs--cur-theme))
 
 (defadvice load-theme (after spacemacs/load-theme-adv activate)
   "Perform post load processing."
   (let ((theme (ad-get-arg 0)))
-    (setq spacemacs--cur-theme theme)
+    ;; Without this a popup is raised every time emacs25 starts up for
+    ;; assignment to a free variable
+    (with-no-warnings
+      (setq spacemacs--cur-theme theme))
     (spacemacs/post-theme-init theme)))
 
 (defun spacemacs/post-theme-init (theme)

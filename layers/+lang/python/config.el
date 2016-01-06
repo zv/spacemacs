@@ -21,3 +21,11 @@
 
 (defvar python-test-runner 'nose
   "Test runner to use. Possible values are `nose' or `pytest'.")
+
+(defvar python-fill-column 79
+  "Fill column value for python buffers")
+
+(defvar python-auto-set-local-pyenv-version 'on-visit
+  "Automatically set pyenv version from \".python-version\".
+
+Possible values are `on-visit', `on-project-switch' or `nil'.")

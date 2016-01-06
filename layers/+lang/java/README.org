@@ -1,4 +1,5 @@
-#+TITLE: Java contribution layer for Spacemacs
+#+TITLE: Java layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/java.png]]
 
@@ -43,8 +44,8 @@ Then set the =Eclipse= and =Eclim= paths in =dotspacemacs/user-config=,
 for instance:
 
 #+BEGIN_SRC elisp
-(setq eclim-eclipse-dirs '("~/opt/eclipse")
-                         '(eclim-executable "~/opt/eclipse/eclim"))
+(setq eclim-eclipse-dirs "~/opt/eclipse"
+      eclim-executable "~/opt/eclipse/eclim")
 #+END_SRC
 
 *** Usage

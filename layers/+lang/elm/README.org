@@ -1,4 +1,5 @@
-#+TITLE: Elm contribution layer for Spacemacs
+#+TITLE: Elm layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/elm.png]]
 
@@ -129,7 +130,7 @@ can be controlled by passing in these variables in your =~/.spacemacs=:
 
 | Key Binding | Description                                                |
 |-------------+------------------------------------------------------------|
-| ~SPC m s i~ | load-elm-repl                                              |
+| ~SPC m s i~ | elm-repl-load                                              |
 | ~SPC m s f~ | send current function to REPL                              |
 | ~SPC m s F~ | send current function to REPL and focus it in insert state |
 | ~SPC m s r~ | send current region to REPL                                |

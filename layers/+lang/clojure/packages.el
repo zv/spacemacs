@@ -17,8 +17,9 @@
     :init
     (add-hook 'clojure-mode-hook (lambda () (require 'align-cljlet)))
     :config
-    (evil-leader/set-key-for-mode 'clojure-mode
-      "mfl" 'align-cljlet)))
+    (dolist (mode '(clojure-mode clojurescript-mode))
+      (spacemacs/set-leader-keys-for-major-mode mode
+        "fl" 'align-cljlet))))
 
 (defun clojure/init-cider ()
   (use-package cider
@@ -40,8 +41,8 @@
       (with-eval-after-load 'golden-ratio
         (push 'cider-popup-buffer-quit-function golden-ratio-extra-commands))
       ;; add support for evil
-      (push 'cider-stacktrace-mode evil-motion-state-modes)
-      (push 'cider-popup-buffer-mode evil-motion-state-modes)
+      (evil-set-initial-state 'cider-stacktrace-mode 'motion)
+      (evil-set-initial-state 'cider-popup-buffer-mode 'motion)
 
       (defun spacemacs//cider-eval-in-repl-no-focus (form)
         "Insert FORM in the REPL buffer and eval it."
@@ -163,119 +164,122 @@ If called with a prefix argument, uses the other-window instead."
 
       (add-hook 'cider--debug-mode-hook 'spacemacs/cider-debug-setup)
 
-      (evilify cider-stacktrace-mode cider-stacktrace-mode-map
-               (kbd "C-j") 'cider-stacktrace-next-cause
-               (kbd "C-k") 'cider-stacktrace-previous-cause
-               (kbd "TAB") 'cider-stacktrace-cycle-current-cause
-               (kbd "0")   'cider-stacktrace-cycle-all-causes
-               (kbd "1")   'cider-stacktrace-cycle-cause-1
-               (kbd "2")   'cider-stacktrace-cycle-cause-2
-               (kbd "3")   'cider-stacktrace-cycle-cause-3
-               (kbd "4")   'cider-stacktrace-cycle-cause-4
-               (kbd "5")   'cider-stacktrace-cycle-cause-5
-               (kbd "a")   'cider-stacktrace-toggle-all
-               (kbd "c")   'cider-stacktrace-toggle-clj
-               (kbd "d")   'cider-stacktrace-toggle-duplicates
-               (kbd "J")   'cider-stacktrace-toggle-java
-               (kbd "r")   'cider-stacktrace-toggle-repl
-               (kbd "T")   'cider-stacktrace-toggle-tooling)
+      (evilified-state-evilify cider-stacktrace-mode cider-stacktrace-mode-map
+        (kbd "C-j") 'cider-stacktrace-next-cause
+        (kbd "C-k") 'cider-stacktrace-previous-cause
+        (kbd "TAB") 'cider-stacktrace-cycle-current-cause
+        (kbd "0")   'cider-stacktrace-cycle-all-causes
+        (kbd "1")   'cider-stacktrace-cycle-cause-1
+        (kbd "2")   'cider-stacktrace-cycle-cause-2
+        (kbd "3")   'cider-stacktrace-cycle-cause-3
+        (kbd "4")   'cider-stacktrace-cycle-cause-4
+        (kbd "5")   'cider-stacktrace-cycle-cause-5
+        (kbd "a")   'cider-stacktrace-toggle-all
+        (kbd "c")   'cider-stacktrace-toggle-clj
+        (kbd "d")   'cider-stacktrace-toggle-duplicates
+        (kbd "J")   'cider-stacktrace-toggle-java
+        (kbd "r")   'cider-stacktrace-toggle-repl
+        (kbd "T")   'cider-stacktrace-toggle-tooling)
 
       ;; open cider-doc directly and close it with q
       (setq cider-prompt-for-symbol nil)
 
-      (evilify cider-docview-mode cider-docview-mode-map
-               (kbd "q") 'cider-popup-buffer-quit)
+      (evilified-state-evilify cider-docview-mode cider-docview-mode-map
+        (kbd "q") 'cider-popup-buffer-quit)
 
-      (evilify cider-inspector-mode cider-inspector-mode-map
-               (kbd "L") 'cider-inspector-pop
-               (kbd "n") 'cider-inspector-next-page
-               (kbd "N") 'cider-inspector-previous-page
-               (kbd "r") 'cider-inspector-refresh)
+      (evilified-state-evilify cider-inspector-mode cider-inspector-mode-map
+        (kbd "L") 'cider-inspector-pop
+        (kbd "n") 'cider-inspector-next-page
+        (kbd "N") 'cider-inspector-previous-page
+        (kbd "r") 'cider-inspector-refresh)
 
-      (evilify cider-test-report-mode cider-test-report-mode-map
-               (kbd "C-j") 'cider-test-next-result
-               (kbd "C-k") 'cider-test-previous-result
-               (kbd "RET") 'cider-test-jump
-               (kbd "d")   'cider-test-ediff
-               (kbd "e")   'cider-test-stacktrace
-               (kbd "q")   'cider-popup-buffer-quit
-               (kbd "r")   'cider-test-rerun-tests
-               (kbd "t")   'cider-test-run-test
-               (kbd "T")   'cider-test-run-tests)
+      (evilified-state-evilify cider-test-report-mode cider-test-report-mode-map
+        (kbd "C-j") 'cider-test-next-result
+        (kbd "C-k") 'cider-test-previous-result
+        (kbd "RET") 'cider-test-jump
+        (kbd "d")   'cider-test-ediff
+        (kbd "e")   'cider-test-stacktrace
+        (kbd "q")   'cider-popup-buffer-quit
+        (kbd "r")   'cider-test-rerun-tests
+        (kbd "t")   'cider-test-run-test
+        (kbd "T")   'cider-test-run-tests)
 
       ;; TODO: having this work for cider-macroexpansion-mode would be nice,
       ;;       but the problem is that it uses clojure-mode as its major-mode
 
       (dolist (m '(clojure-mode clojurec-mode clojurescript-mode clojurex-mode))
-        (evil-leader/set-key-for-mode m
-          "mhh" 'cider-doc
-          "mhg" 'cider-grimoire
-          "mhj" 'cider-javadoc
+        (spacemacs/set-leader-keys-for-major-mode m
+          "hh" 'cider-doc
+          "hg" 'cider-grimoire
+          "hj" 'cider-javadoc
 
-          "meb" 'cider-eval-buffer
-          "mee" 'cider-eval-last-sexp
-          "mef" 'cider-eval-defun-at-point
-          "mer" 'cider-eval-region
-          "mew" 'cider-eval-last-sexp-and-replace
+          "eb" 'cider-eval-buffer
+          "ee" 'cider-eval-last-sexp
+          "ef" 'cider-eval-defun-at-point
+          "er" 'cider-eval-region
+          "ew" 'cider-eval-last-sexp-and-replace
 
-          "mgb" 'cider-jump-back
-          "mge" 'cider-jump-to-compilation-error
-          "mgg" 'cider-find-var
-          "mgr" 'cider-jump-to-resource
+          "fb" 'cider-format-buffer
 
-          "msb" 'cider-load-buffer
-          "msB" 'spacemacs/cider-send-buffer-in-repl-and-focus
-          "msc" 'cider-connect
-          "mse" 'spacemacs/cider-send-last-sexp-to-repl
-          "msE" 'spacemacs/cider-send-last-sexp-to-repl-focus
-          "msf" 'spacemacs/cider-send-function-to-repl
-          "msF" 'spacemacs/cider-send-function-to-repl-focus
-          "msi" 'cider-jack-in
-          "msn" 'spacemacs/cider-send-ns-form-to-repl
-          "msN" 'spacemacs/cider-send-ns-form-to-repl-focus
-          "msq" 'cider-quit
-          "msr" 'spacemacs/cider-send-region-to-repl
-          "msR" 'spacemacs/cider-send-region-to-repl-focus
-          "mss" 'cider-switch-to-repl-buffer
-          "msx" 'cider-refresh
+          "gb" 'cider-jump-back
+          "ge" 'cider-jump-to-compilation-error
+          "gg" 'cider-find-var
+          "gr" 'cider-jump-to-resource
 
-          "mTf" 'spacemacs/cider-toggle-repl-font-locking
-          "mTp" 'spacemacs/cider-toggle-repl-pretty-printing
+          "sb" 'cider-load-buffer
+          "sB" 'spacemacs/cider-send-buffer-in-repl-and-focus
+          "sc" 'cider-connect
+          "se" 'spacemacs/cider-send-last-sexp-to-repl
+          "sE" 'spacemacs/cider-send-last-sexp-to-repl-focus
+          "sf" 'spacemacs/cider-send-function-to-repl
+          "sF" 'spacemacs/cider-send-function-to-repl-focus
+          "si" 'cider-jack-in
+          "sI" 'cider-jack-in-clojurescript
+          "sn" 'spacemacs/cider-send-ns-form-to-repl
+          "sN" 'spacemacs/cider-send-ns-form-to-repl-focus
+          "sq" 'cider-quit
+          "sr" 'spacemacs/cider-send-region-to-repl
+          "sR" 'spacemacs/cider-send-region-to-repl-focus
+          "ss" 'cider-switch-to-repl-buffer
+          "sx" 'cider-refresh
 
-          "mta" 'spacemacs/cider-test-run-all-tests
-          "mtr" 'spacemacs/cider-test-rerun-tests
-          "mtt" 'spacemacs/cider-test-run-focused-test
+          "Tf" 'spacemacs/cider-toggle-repl-font-locking
+          "Tp" 'spacemacs/cider-toggle-repl-pretty-printing
 
-          "mdb" 'cider-debug-defun-at-point
-          "mde" 'spacemacs/cider-display-error-buffer
-          "mdi" 'cider-inspect))
+          "ta" 'spacemacs/cider-test-run-all-tests
+          "tr" 'spacemacs/cider-test-rerun-tests
+          "tt" 'spacemacs/cider-test-run-focused-test
 
-      (evil-leader/set-key-for-mode 'cider-repl-mode
-        "mhh" 'cider-doc
-        "mhg" 'cider-grimoire
-        "mhj" 'cider-javadoc
+          "db" 'cider-debug-defun-at-point
+          "de" 'spacemacs/cider-display-error-buffer
+          "di" 'cider-inspect))
 
-        "mee" 'cider-eval-last-sexp
-        "mef" 'cider-eval-defun-at-point
-        "mer" 'cider-eval-region
-        "mew" 'cider-eval-last-sexp-and-replace
+      (spacemacs/set-leader-keys-for-major-mode 'cider-repl-mode
+        "hh" 'cider-doc
+        "hg" 'cider-grimoire
+        "hj" 'cider-javadoc
 
-        "mgb" 'cider-jump-back
-        "mge" 'cider-jump-to-compilation-error
-        "mgg" 'cider-find-var
-        "mgr" 'cider-jump-to-resource
+        "ee" 'cider-eval-last-sexp
+        "ef" 'cider-eval-defun-at-point
+        "er" 'cider-eval-region
+        "ew" 'cider-eval-last-sexp-and-replace
 
-        "msc" 'cider-repl-clear-buffer
-        "msn" 'cider-repl-set-ns
-        "msq" 'cider-quit
-        "mss" 'cider-switch-to-last-clojure-buffer
-        "msx" 'cider-refresh
+        "gb" 'cider-jump-back
+        "ge" 'cider-jump-to-compilation-error
+        "gg" 'cider-find-var
+        "gr" 'cider-jump-to-resource
 
-        "mTf" 'spacemacs/cider-toggle-repl-font-locking
-        "mTp" 'spacemacs/cider-toggle-repl-pretty-printing
+        "sc" 'cider-repl-clear-buffer
+        "sn" 'cider-repl-set-ns
+        "sq" 'cider-quit
+        "ss" 'cider-switch-to-last-clojure-buffer
+        "sx" 'cider-refresh
 
-        "mde" 'spacemacs/cider-display-error-buffer
-        "mdi" 'cider-inspect)
+        "Tf" 'spacemacs/cider-toggle-repl-font-locking
+        "Tp" 'spacemacs/cider-toggle-repl-pretty-printing
+
+        "de" 'spacemacs/cider-display-error-buffer
+        "di" 'cider-inspect)
 
       (evil-define-key 'normal cider-repl-mode-map
         "C-j" 'cider-repl-next-input
@@ -302,72 +306,35 @@ If called with a prefix argument, uses the other-window instead."
       (cljr-add-keybindings-with-prefix "C-c C-f")
 
       (dolist (m '(clojure-mode clojurec-mode clojurescript-mode clojurex-mode))
-        (evil-leader/set-key-for-mode m
-          "mr?"  'cljr-describe-refactoring
-          "mrad" 'cljr-add-declaration
-          "mrai" 'cljr-add-import-to-ns
-          "mram" 'cljr-add-missing-libspec
-          "mrap" 'cljr-add-project-dependency
-          "mrar" 'cljr-add-require-to-ns
-          "mras" 'cljr-add-stubs
-          "mrau" 'cljr-add-use-to-ns
-          "mrcc" 'cljr-cycle-coll
-          "mrci" 'cljr-cycle-if
-          "mrcn" 'cljr-clean-ns
-          "mrcp" 'cljr-cycle-privacy
-          "mrdk" 'cljr-destructure-keys
-          "mref" 'cljr-extract-function
-          "mrec" 'cljr-extract-constant
-          "mrel" 'cljr-expand-let
-          "mrfu" 'cljr-find-usages
-          "mrfe" 'cljr-create-fn-from-example
-          "mrhd" 'cljr-hotload-dependency
-          "mril" 'cljr-introduce-let
-          "mris" 'cljr-inline-symbol
-          "mrmf" 'cljr-move-form
-          "mrml" 'cljr-move-to-let
-          "mrpc" 'cljr-project-clean
-          "mrpf" 'cljr-promote-function
-          "mrrd" 'cljr-remove-debug-fns
-          "mrrf" 'cljr-rename-file-or-dir
-          "mrrl" 'cljr-remove-let
-          "mrrr" 'cljr-remove-unused-requires
-          "mrrs" 'cljr-rename-symbol
-          "mrru" 'cljr-replace-use
-          "mrsn" 'cljr-sort-ns
-          "mrsp" 'cljr-sort-project-dependencies
-          "mrsr" 'cljr-stop-referring
-          "mrsc" 'cljr-show-changelog
-          "mrtf" 'cljr-thread-first-all
-          "mrth" 'cljr-thread
-          "mrtl" 'cljr-thread-last-all
-          "mrua" 'cljr-unwind-all
-          "mrup" 'cljr-update-project-dependencies
-          "mruw" 'cljr-unwind))
+        (dolist (r cljr--all-helpers)
+          (let* ((binding (car r))
+                 (func (car (cdr r))))
+            (when (not (string-prefix-p "hydra" (symbol-name func)))
+              (spacemacs/set-leader-keys-for-major-mode m (concat "r" binding) func)))))
 
-      (evil-leader/set-key-for-mode 'cider-repl-mode
-        "mr?"  'cljr-describe-refactoring
-        "mrap" 'cljr-add-project-dependency
-        "mras" 'cljr-add-stubs
-        "mrcc" 'cljr-cycle-coll
-        "mrci" 'cljr-cycle-if
-        "mrcp" 'cljr-cycle-privacy
-        "mrdk" 'cljr-destructure-keys
-        "mrel" 'cljr-expand-let
-        "mrfu" 'cljr-find-usages
-        "mrhd" 'cljr-hotload-dependency
-        "mril" 'cljr-introduce-let
-        "mrml" 'cljr-move-to-let
-        "mrpc" 'cljr-project-clean
-        "mrrl" 'cljr-remove-let
-        "mrsp" 'cljr-sort-project-dependencies
-        "mrsc" 'cljr-show-changelog
-        "mrtf" 'cljr-thread-first-all
-        "mrth" 'cljr-thread
-        "mrtl" 'cljr-thread-last-all
-        "mrua" 'cljr-unwind-all
-        "mrup" 'cljr-update-project-dependencies
-        "mruw" 'cljr-unwind))))
+      (spacemacs/set-leader-keys-for-major-mode 'cider-repl-mode
+        "r?"  'cljr-describe-refactoring
+        "rap" 'cljr-add-project-dependency
+        "ras" 'cljr-add-stubs
+        "rcc" 'cljr-cycle-coll
+        "rci" 'cljr-cycle-if
+        "rcp" 'cljr-cycle-privacy
+        "rdk" 'cljr-destructure-keys
+        "rel" 'cljr-expand-let
+        "rfu" 'cljr-find-usages
+        "rhd" 'cljr-hotload-dependency
+        "ril" 'cljr-introduce-let
+        "rml" 'cljr-move-to-let
+        "rpc" 'cljr-project-clean
+        "rrl" 'cljr-remove-let
+        "rsp" 'cljr-sort-project-dependencies
+        "rsc" 'cljr-show-changelog
+        "rtf" 'cljr-thread-first-all
+        "rth" 'cljr-thread
+        "rtl" 'cljr-thread-last-all
+        "rua" 'cljr-unwind-all
+        "rup" 'cljr-update-project-dependencies
+        "ruw" 'cljr-unwind))))
 
 (defun clojure/init-clojure-mode ()
   (use-package clojure-mode
@@ -387,8 +354,8 @@ If called with a prefix argument, uses the other-window instead."
                  (if clojure-defun-style-default-indent "ON" "OFF")))
 
       (dolist (m '(clojure-mode clojurec-mode clojurescript-mode clojurex-mode))
-        (evil-leader/set-key-for-mode m
-          "mTi" 'spacemacs/clojure-mode-toggle-default-indent-style))
+        (spacemacs/set-leader-keys-for-major-mode m
+          "Ti" 'spacemacs/clojure-mode-toggle-default-indent-style))
 
       (when clojure-enable-fancify-symbols
         (dolist (m '(clojure-mode clojurescript-mode clojurec-mode clojurex-mode))

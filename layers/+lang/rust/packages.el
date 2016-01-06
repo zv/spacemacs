@@ -22,7 +22,7 @@
     ))
 
 (defun rust/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'rust-mode))
+  (spacemacs/add-flycheck-hook 'rust-mode-hook))
 
 (when (configuration-layer/layer-usedp 'syntax-checking)
   (defun rust/init-flycheck-rust ()
@@ -40,11 +40,15 @@
         ;; Don't pair lifetime specifiers
         (sp-local-pair 'rust-mode "'" nil :actions nil))
 
-      (evil-leader/set-key-for-mode 'rust-mode
-        "mcc" 'spacemacs/rust-cargo-build
-        "mct" 'spacemacs/rust-cargo-test
-        "mcd" 'spacemacs/rust-cargo-doc
-        "mcx" 'spacemacs/rust-cargo-run))))
+      (spacemacs/declare-prefix-for-mode 'rust-mode "mc" "cargo")
+      (spacemacs/declare-prefix-for-mode 'rust-mode "mg" "goto")
+      (spacemacs/set-leader-keys-for-major-mode 'rust-mode
+        "cc" 'spacemacs/rust-cargo-build
+        "ct" 'spacemacs/rust-cargo-test
+        "cd" 'spacemacs/rust-cargo-doc
+        "cx" 'spacemacs/rust-cargo-run
+        "cC" 'spacemacs/rust-cargo-clean
+        "gg" 'racer-find-definition))))
 
 (defun rust/init-toml-mode ()
   (use-package toml-mode
@@ -61,6 +65,9 @@
       :init (push 'company-racer company-backends-rust-mode))))
 
 (defun rust/init-racer ()
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-copy-env "RUST_SRC_PATH"))
+
   (use-package racer
     :if rust-enable-racer
     :defer t

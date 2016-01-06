@@ -2,14 +2,17 @@
 (setq dash-packages '(helm-dash))
 
 (cond
- ((spacemacs/system-is-mac) (push 'dash-at-point dash-packages))
- ((spacemacs/system-is-linux) (push 'zeal-at-point dash-packages)))
+ ((spacemacs/system-is-mac)
+  (push 'dash-at-point dash-packages))
+ ((or (spacemacs/system-is-linux)
+      (spacemacs/system-is-mswindows))
+  (push 'zeal-at-point dash-packages)))
 
 (defun dash/init-helm-dash ()
   (use-package helm-dash
     :defer t
     :init
-    (evil-leader/set-key
+    (spacemacs/set-leader-keys
       "dh" 'helm-dash-at-point
       "dH" 'helm-dash)
     :config
@@ -26,14 +29,14 @@
     :defer t
     :init
     (progn
-      (evil-leader/set-key "dd" 'dash-at-point)
-      (evil-leader/set-key "dD" 'dash-at-point-with-docset))))
+      (spacemacs/set-leader-keys "dd" 'dash-at-point)
+      (spacemacs/set-leader-keys "dD" 'dash-at-point-with-docset))))
 
 (defun dash/init-zeal-at-point ()
   (use-package zeal-at-point
     :defer t
     :init
-    (evil-leader/set-key
+    (spacemacs/set-leader-keys
       "dd" 'zeal-at-point
       "dD" 'zeal-at-point-set-docset)
     :config

@@ -35,16 +35,14 @@
     :post-config
     (progn
       (flycheck-add-mode 'javascript-eslint 'react-mode)
-      (setq-default
-       ;; disable jshint since we prefer eslint checking
-       flycheck-disabled-checkers (append flycheck-disabled-checkers
-                                          '(javascript-jshint))
-       ;; disable json-jsonlist checking for json files
-       flycheck-disabled-checkers (append flycheck-disabled-checkers
-                                          '(json-jsonlist))))))
+
+      (defun react/disable-jshint ()
+        (push 'javascript-jshint flycheck-disabled-checkers))
+
+      (add-hook 'react-mode-hook #'react/disable-jshint))))
 
 (defun react/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'react-mode))
+  (spacemacs/add-flycheck-hook 'react-mode-hook))
 
 (defun react/post-init-js-doc ()
   (add-hook 'react-mode-hook 'spacemacs/js-doc-require)
@@ -62,16 +60,22 @@
   (add-hook 'react-mode-hook 'tern-mode))
 
 (defun react/post-init-web-beautify ()
-  (evil-leader/set-key-for-mode 'react-mode  "m=" 'web-beautify-js))
+  (spacemacs/set-leader-keys-for-major-mode 'react-mode  "=" 'web-beautify-js))
 
 (defun react/post-init-web-mode ()
   (define-derived-mode react-mode web-mode "react")
   (add-to-list 'auto-mode-alist '("\\.jsx\\'" . react-mode))
   (add-to-list 'auto-mode-alist '("\\.react.js\\'" . react-mode))
+  (add-to-list 'auto-mode-alist '("\\index.android.js\\'" . react-mode))
+  (add-to-list 'auto-mode-alist '("\\index.ios.js\\'" . react-mode))
   (add-to-list 'magic-mode-alist '("/** @jsx React.DOM */" . react-mode))
   (defun spacemacs//setup-react-mode ()
     "Adjust web-mode to accommodate react-mode"
     (emmet-mode 0)
+    ;; See https://github.com/CestDiego/emmet-mode/commit/3f2904196e856d31b9c95794d2682c4c7365db23
+    (setq-local emmet-expand-jsx-className? t)
+    ;; Enable js-mode snippets
+    (yas-activate-extra-mode 'js-mode)
     ;; Force jsx content type
     (web-mode-set-content-type "jsx")
     ;; Why do we do this ?

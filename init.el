@@ -14,16 +14,16 @@
 ;; (package-initialize)
 
 (setq gc-cons-threshold 100000000)
-(defconst spacemacs-version          "0.104.8" "Spacemacs version.")
+(defconst spacemacs-version          "0.105.2" "Spacemacs version.")
 (defconst spacemacs-emacs-min-version   "24.3" "Minimal version of Emacs.")
 
-(defun spacemacs/emacs-version-ok ()
-  (version<= spacemacs-emacs-min-version emacs-version))
-
-(when (spacemacs/emacs-version-ok)
+(if (not (version<= spacemacs-emacs-min-version emacs-version))
+    (message (concat "Your version of Emacs (%s) is too old. "
+                     "Spacemacs requires Emacs version %d or above.")
+             emacs-version spacemacs-emacs-min-version)
   (load-file (concat user-emacs-directory "core/core-load-paths.el"))
+  (when init-file-debug (require 'core-debug))
   (require 'core-spacemacs)
-  (require 'core-configuration-layer)
   (spacemacs/init)
   (spacemacs/maybe-install-dotfile)
   (configuration-layer/sync)

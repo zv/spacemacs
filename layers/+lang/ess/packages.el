@@ -21,102 +21,84 @@
     ))
 
 (defun ess/init-ess ()
-  ;; ESS is not quick to load so we just load it when
-  ;; we need it (see my-keybindings.el for the associated
-  ;; keybinding)
-  (defun load-ess-on-demand ()
-    (interactive)
-    (-all? '---truthy? (list
-                        (require 'ess-site)
-                        (require 'ess-R-object-popup)
-                        (require 'ess-R-data-view))))
-
-  (evil-leader/set-key "ess" 'load-ess-on-demand)
-
-  (use-package ess
-    :defer t
+  (use-package ess-site
+    :mode (("\\.sp\\'"           . S-mode)
+           ("/R/.*\\.q\\'"       . R-mode)
+           ("\\.[qsS]\\'"        . S-mode)
+           ("\\.ssc\\'"          . S-mode)
+           ("\\.SSC\\'"          . S-mode)
+           ("\\.[rR]\\'"         . R-mode)
+           ("\\.[rR]nw\\'"       . Rnw-mode)
+           ("\\.[sS]nw\\'"       . Snw-mode)
+           ("\\.[rR]profile\\'"  . R-mode)
+           ("NAMESPACE\\'"       . R-mode)
+           ("CITATION\\'"        . R-mode)
+           ("\\.omg\\'"          . omegahat-mode)
+           ("\\.hat\\'"          . omegahat-mode)
+           ("\\.lsp\\'"          . XLS-mode)
+           ("\\.do\\'"           . STA-mode)
+           ("\\.ado\\'"          . STA-mode)
+           ("\\.[Ss][Aa][Ss]\\'" . SAS-mode)
+           ("\\.jl\\'"           . ess-julia-mode)
+           ("\\.[Ss]t\\'"        . S-transcript-mode)
+           ("\\.Sout"            . S-transcript-mode)
+           ("\\.[Rr]out"         . R-transcript-mode)
+           ("\\.Rd\\'"           . Rd-mode)
+           ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
+           ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
+           ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
+           ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
+           ("\\.[Jj][Oo][Gg]\\'" . ess-jags-mode)
+           ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
+    :commands (R stata julia SAS)
     :init
     (progn
-      (setq auto-mode-alist (append
-                             '(("\\.sp\\'"           . S-mode)
-                               ("/R/.*\\.q\\'"       . R-mode)
-                               ("\\.[qsS]\\'"        . S-mode)
-                               ("\\.ssc\\'"          . S-mode)
-                               ("\\.SSC\\'"          . S-mode)
-                               ("\\.[rR]\\'"         . R-mode)
-                               ("\\.[rR]nw\\'"       . Rnw-mode)
-                               ("\\.[sS]nw\\'"       . Snw-mode)
-                               ("\\.[rR]profile\\'"  . R-mode)
-                               ("NAMESPACE\\'"       . R-mode)
-                               ("CITATION\\'"        . R-mode)
-                               ("\\.omg\\'"          . omegahat-mode)
-                               ("\\.hat\\'"          . omegahat-mode)
-                               ("\\.lsp\\'"          . XLS-mode)
-                               ("\\.do\\'"           . STA-mode)
-                               ("\\.ado\\'"          . STA-mode)
-                               ("\\.[Ss][Aa][Ss]\\'" . SAS-mode)
-                               ("\\.[Ss]t\\'"        . S-transcript-mode)
-                               ("\\.Sout"            . S-transcript-mode)
-                               ("\\.[Rr]out"         . R-transcript-mode)
-                               ("\\.Rd\\'"           . Rd-mode)
-                               ("\\.[Bb][Uu][Gg]\\'" . ess-bugs-mode)
-                               ("\\.[Bb][Oo][Gg]\\'" . ess-bugs-mode)
-                               ("\\.[Bb][Mm][Dd]\\'" . ess-bugs-mode)
-                               ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
-                               ("\\.[Jj][Oo][Gg]\\'" . ess-jags-mode)
-                               ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
-                             auto-mode-alist))
-
-      (defun ess/auto-load-hack (mode-symbol)
-        (eval
-         `(defun ,mode-symbol ()
-            "This is a function that will hijack itself with its
-definition from ess. The reason this exists is that ess does
-not play nicely with autoloads"
-            (when (load-ess-on-demand)
-              (,mode-symbol)))))
-
-      (defvar ess/r-modes-list '(R-mode R-transcript-mode Rd-mode Rnw-mode S-mode S-transcript-mode
-                                        SAS-mode STA-mode Snw-mode XLS-mode ess-bugs-mode ess-jags-mode omegahat-mode)
-        "This is the list of modes defined by ess")
-
-      (mapc (lambda (sym) (ess/auto-load-hack sym)) ess/r-modes-list)
-
-      (push '(company-R-args company-R-objects) company-backends-ess-mode)))
+      (when (configuration-layer/package-usedp 'company)
+          (add-hook 'ess-mode-hook 'company-mode))))
 
   ;; R --------------------------------------------------------------------------
   (with-eval-after-load 'ess-site
-    (add-to-list 'auto-mode-alist '("\\.R$" . R-mode))
     ;; Follow Hadley Wickham's R style guide
     (setq ess-first-continued-statement-offset 2
           ess-continued-statement-offset 0
           ess-expression-offset 2
           ess-nuke-trailing-whitespace-p t
           ess-default-style 'DEFAULT)
-    (evil-leader/set-key-for-mode 'ess-mode
-      "msi" 'R
+
+    (defun spacemacs/ess-start-repl ()
+      "Start a REPL corresponding to the ess-language of the current buffer."
+      (interactive)
+      (cond
+       ((string= "S" ess-language) (call-interactively 'R))
+       ((string= "STA" ess-language) (call-interactively 'stata))
+       ((string= "SAS" ess-language) (call-interactively 'SAS))))
+
+    (spacemacs/set-leader-keys-for-major-mode 'ess-julia-mode
+      "si" 'julia)
+    (spacemacs/set-leader-keys-for-major-mode 'ess-mode
+      "si" 'spacemacs/ess-start-repl
       ;; noweb
-      "mcC" 'ess-eval-chunk-and-go
-      "mcc" 'ess-eval-chunk
-      "mcd" 'ess-eval-chunk-and-step
-      "mcm" 'ess-noweb-mark-chunk
-      "mcN" 'ess-noweb-previous-chunk
-      "mcn" 'ess-noweb-next-chunk
-      ;; helpers
-      "mhd" 'ess-R-dv-pprint
-      "mhi" 'ess-R-object-popup
-      "mht" 'ess-R-dv-ctable
+      "cC" 'ess-eval-chunk-and-go
+      "cc" 'ess-eval-chunk
+      "cd" 'ess-eval-chunk-and-step
+      "cm" 'ess-noweb-mark-chunk
+      "cN" 'ess-noweb-previous-chunk
+      "cn" 'ess-noweb-next-chunk
       ;; REPL
-      "msB" 'ess-eval-buffer-and-go
-      "msb" 'ess-eval-buffer
-      "msD" 'ess-eval-function-or-paragraph-and-step
-      "msd" 'ess-eval-region-or-line-and-step
-      "msL" 'ess-eval-line-and-go
-      "msl" 'ess-eval-line
-      "msR" 'ess-eval-region-and-go
-      "msr" 'ess-eval-region
-      "msT" 'ess-eval-function-and-go
-      "mst" 'ess-eval-function
+      "sB" 'ess-eval-buffer-and-go
+      "sb" 'ess-eval-buffer
+      "sD" 'ess-eval-function-or-paragraph-and-step
+      "sd" 'ess-eval-region-or-line-and-step
+      "sL" 'ess-eval-line-and-go
+      "sl" 'ess-eval-line
+      "sR" 'ess-eval-region-and-go
+      "sr" 'ess-eval-region
+      "sT" 'ess-eval-function-and-go
+      "st" 'ess-eval-function
+      ;; R helpers
+      "hd" 'ess-R-dv-pprint
+      "hi" 'ess-R-object-popup
+      "ht" 'ess-R-dv-ctable
       )
     (define-key ess-mode-map (kbd "<s-return>") 'ess-eval-line)
     (define-key inferior-ess-mode-map (kbd "C-j") 'comint-next-input)
@@ -137,6 +119,3 @@ not play nicely with autoloads"
     (progn
       (add-hook 'ess-mode-hook 'ess-smart-equals-mode)
       (add-hook 'inferior-ess-mode-hook 'ess-smart-equals-mode))))
-
-(defun ess/post-init-company ()
-  (spacemacs|add-company-hook ess-mode))

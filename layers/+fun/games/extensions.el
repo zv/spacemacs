@@ -36,15 +36,15 @@
           (tetris-pause-game))))
     :config
     (progn
-      (evilify tetris-mode tetris-mode-map
-               "h" 'tetris-move-left
-               "i" 'tetris-rotate-prev
-               "j" 'tetris-move-bottom
-               "k" 'tetris-rotate-next
-               "l" 'tetris-move-right
-               "q" 'spacemacs/tetris-quit-game))))
+      (evilified-state-evilify tetris-mode tetris-mode-map
+        "h" 'tetris-move-left
+        "i" 'tetris-rotate-prev
+        "j" 'tetris-move-bottom
+        "k" 'tetris-rotate-next
+        "l" 'tetris-move-right
+        "q" 'spacemacs/tetris-quit-game))))
 
 (defun games/init-helm-games ()
   (use-package helm-games
     :commands helm-games
-    :init (evil-leader/set-key "aG" 'helm-games)))
+    :init (spacemacs/set-leader-keys "aG" 'helm-games)))

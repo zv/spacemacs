@@ -1,4 +1,5 @@
-#+TITLE: evil-snipe contribution layer for Spacemacs
+#+TITLE: Evil-snipe layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/Cat_With_Rifle.jpg]]
 
@@ -46,7 +47,7 @@ layer variable =evil-snipe-enable-alternate-f-and-t-behaviors= to =t=:
 
 #+BEGIN_SRC emacs-lisp
   (setq-default dotspacemacs-configuration-layers
-    '(evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t ))
+    '((evil-snipe :variables evil-snipe-enable-alternate-f-and-t-behaviors t)))
 #+END_SRC
 
 ** Two-character search with s

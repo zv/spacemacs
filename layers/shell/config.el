@@ -10,6 +10,11 @@
 ;;
 ;;; License: GPLv3
 
+;; Emacs built-in variables
+
+;; move point to the end of buffer on new output
+(setq comint-move-point-for-output t)
+
 ;; Variables
 
 (spacemacs|defvar-company-backends eshell-mode)
@@ -26,7 +31,7 @@
 (defvar shell-default-height 30
   "Height in percents for the shell window.")
 
-(defvar shell-default-term-shell "/bin/bash"
+(defvar shell-default-term-shell shell-file-name
   "Default shell to use in `term' and `ansi-term' shells.")
 
 (defvar shell-enable-smart-eshell nil

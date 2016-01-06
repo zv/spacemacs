@@ -18,10 +18,9 @@
     :defer t
     :init
     (progn
-      (evil-leader/set-key
+      (spacemacs/set-leader-keys
         "ar" 'ranger
         "ad" 'deer)
-      (define-key evil-normal-state-map (kbd "-") 'deer)
 
       ;; set up image-dired to allow picture resize
       (setq image-dired-dir (concat spacemacs-cache-directory "image-dir"))

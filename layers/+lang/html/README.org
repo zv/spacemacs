@@ -1,4 +1,5 @@
-#+TITLE: HTML contribution layer for Spacemacs
+#+TITLE: HTML layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/html.png]]
 
@@ -43,6 +44,7 @@ To use this contribution add it to your =~/.spacemacs=
 | ~SPC m r r~ | rename current element                                    |
 | ~SPC m r w~ | wrap current element                                      |
 | ~SPC m z~   | fold/unfold current element                               |
+| ~%~         | evil-matchit keybinding to jump to closing tag            |
 
 A micro-state is also defined, start it with ~SPC m .~ or ~, .~
 

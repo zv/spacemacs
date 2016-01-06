@@ -13,6 +13,46 @@
 (require 'core-configuration-layer)
 
 ;; ---------------------------------------------------------------------------
+;; configuration-layer//resolve-package-archives
+;; ---------------------------------------------------------------------------
+
+(ert-deftest test-resolve-package-archives--simple-https ()
+  (let ((input '(("melpa" . "melpa.org/packages/")))
+        (dotspacemacs-elpa-https t))
+    (should (equal '(("melpa" . "https://melpa.org/packages/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+(ert-deftest test-resolve-package-archives--simple-http ()
+  (let ((input '(("melpa" . "melpa.org/packages/")))
+        dotspacemacs-elpa-https)
+    (should (equal '(("melpa" . "http://melpa.org/packages/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+(ert-deftest test-resolve-package-archives--org-supports-http ()
+  (let ((input '(("org"   . "orgmode.org/elpa/")))
+        dotspacemacs-elpa-https)
+    (should (equal '(("org" . "http://orgmode.org/elpa/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+(ert-deftest test-resolve-package-archives--org-does-not-support-https ()
+  (let ((input '(("org"   . "orgmode.org/elpa/")))
+        (dotspacemacs-elpa-https t))
+    (should (equal '(("org" . "http://orgmode.org/elpa/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+(ert-deftest test-resolve-package-archives--idempotent-when-already-http-prefix ()
+  (let ((input '(("melpa"   . "http://melpa.org/packages/")))
+        (dotspacemacs-elpa-https t))
+    (should (equal '(("melpa" . "http://melpa.org/packages/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+(ert-deftest test-resolve-package-archives--idempotent-when-already-https-prefix ()
+  (let ((input '(("melpa"   . "https://melpa.org/packages/")))
+        dotspacemacs-elpa-https)
+    (should (equal '(("melpa" . "https://melpa.org/packages/"))
+                   (configuration-layer//resolve-package-archives input)))))
+
+;; ---------------------------------------------------------------------------
 ;; configuration-layer//make-layers
 ;; ---------------------------------------------------------------------------
 
@@ -445,7 +485,7 @@
      (should (equal (list (cfgl-package "pkg1" :name 'pkg1 :owner 'layer18 :excluded t))
                     (configuration-layer/get-packages layers))))))
 
-;; TODO remove extensions tests in 0.105.0
+;; TODO remove extensions tests in 0.106.0
 
 (ert-deftest test-get-packages--pre-extensions-backward-compatibility ()
   (let* ((layer1 (cfgl-layer "layer1" :name 'layer1 :dir "/path"))
@@ -609,6 +649,22 @@
       (spacemacs-buffer/loading-animation nil ((:output nil))))
      (configuration-layer//configure-packages-2 `(,pkg)))))
 
+(ert-deftest test-configure-packages-2--protected-package-is-configured()
+  (let ((pkg (cfgl-package "pkg" :name 'pkg :owner 'layer1 :protected t))
+        (mocker-mock-default-record-cls 'mocker-stub-record))
+    (mocker-let
+     ((configuration-layer//configure-package (p) ((:occur 1)))
+      (spacemacs-buffer/loading-animation nil ((:output nil))))
+     (configuration-layer//configure-packages-2 `(,pkg)))))
+
+(ert-deftest test-configure-packages-2--protected-excluded-package-is-configured()
+  (let ((pkg (cfgl-package "pkg" :name 'pkg :owner 'layer1 :excluded t :protected t))
+        (mocker-mock-default-record-cls 'mocker-stub-record))
+    (mocker-let
+     ((configuration-layer//configure-package (p) ((:occur 1)))
+      (spacemacs-buffer/loading-animation nil ((:output nil))))
+     (configuration-layer//configure-packages-2 `(,pkg)))))
+
 (ert-deftest test-configure-packages-2--excluded-package-is-not-configured()
   (let ((pkg (cfgl-package "pkg" :name 'pkg :owner 'layer1 :excluded t))
         (mocker-mock-default-record-cls 'mocker-stub-record))
@@ -676,6 +732,34 @@
       (spacemacs-buffer/message (m) ((:output nil))))
      (configuration-layer//configure-packages-2 `(,pkg))
      (should (equal load-path old-load-path)))))
+
+(ert-deftest
+    test-configure-packages-2--local-package-w/-string-location-update-load-path()
+  (let ((pkg (cfgl-package "pkg"
+                           :name 'pkg
+                           :owner 'dotfile
+                           :location spacemacs-docs-directory))
+        (expected-load-path load-path)
+        (mocker-mock-default-record-cls 'mocker-stub-record))
+    (mocker-let
+     ((spacemacs-buffer/loading-animation nil ((:output nil))))
+     (configuration-layer//configure-packages-2 `(,pkg))
+     (push spacemacs-docs-directory expected-load-path)
+     (should (equal expected-load-path load-path)))))
+
+(ert-deftest
+    test-configure-packages-2--local-package-w/-bad-string-location-gives-warning()
+  (let ((pkg (cfgl-package "pkg"
+                           :name 'pkg
+                           :owner 'dotfile
+                           :location "/this/directory/does/not/exist/"))
+        (mocker-mock-default-record-cls 'mocker-stub-record))
+    (mocker-let
+     ((spacemacs-buffer/loading-animation nil ((:output nil)))
+      (spacemacs-buffer/warning
+       (msg &rest args)
+       ((:record-cls 'mocker-stub-record :output nil :occur 1))))
+     (configuration-layer//configure-packages-2 `(,pkg)))))
 
 ;; ---------------------------------------------------------------------------
 ;; configuration-layer//sort-packages

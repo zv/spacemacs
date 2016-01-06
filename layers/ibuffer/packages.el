@@ -21,15 +21,18 @@
     :defer t
     :init
     (progn
-      (evil-leader/set-key "bB" 'ibuffer)
+      (spacemacs/set-leader-keys "bB" 'ibuffer)
       (global-set-key (kbd "C-x C-b") 'ibuffer)
       (defun spacemacs//ibuffer-group-by-modes ()
         "Group buffers by modes."
         (when (eq 'modes ibuffer-group-buffers-by)
           (spacemacs//ibuffer-create-buffs-group)))
-      (add-hook 'ibuffer-hook 'spacemacs//ibuffer-group-by-modes))
+      (add-hook 'ibuffer-hook 'spacemacs//ibuffer-group-by-modes)
+
+      ;; Use ibuffer to provide :ls
+      (evil-ex-define-cmd "buffers" 'ibuffer))
     :config
-    (spacemacs|evilify-map ibuffer-mode-map
+    (evilified-state-evilify-map ibuffer-mode-map
       :mode ibuffer-mode)))
 
 (defun ibuffer/init-ibuffer-projectile()

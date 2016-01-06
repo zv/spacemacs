@@ -1,4 +1,5 @@
-#+SETUPFILE: theme-readtheorg.setup
+#+TITLE: Spacemacs Conventions
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
 
 * Spacemacs conventions                                     :TOC_4_org:noexport:
  - [[Code guidelines][Code guidelines]]
@@ -14,6 +15,7 @@
      - [[n and N][n and N]]
      - [[Code Navigation][Code Navigation]]
      - [[=insert state= buffers][=insert state= buffers]]
+   - [[Confirm and Abort][Confirm and Abort]]
    - [[Evaluation][Evaluation]]
    - [[REPLs][REPLs]]
      - [[Send code][Send code]]
@@ -129,6 +131,18 @@ should be performed with ~C-j~ and ~C-k~ bindings for vertical movements.
 |-------+-------------|
 | ~C-j~ | go down     |
 | ~C-k~ | go up       |
+
+** Confirm and Abort
+Confirming and aborting actions which are bound to ~C-c C-c~ and ~C-c C-k~
+in raw Emacs are mirrored in Spacemacs to:
+
+| Key                     | Description               |
+|-------------------------+---------------------------|
+| ~SPC m ,~ and ~SPC m c~ | Valid/Confirm the message |
+| ~SPC m a~ and ~SPC m k~ | Abort/Discard the message |
+
+Some example of these modes are =magit= commit messages, =message-mode= for
+mails or =org-mode= notes.
 
 ** Evaluation
 Live evaluation of code is under the prefix ~SPC m e~.
@@ -327,7 +341,7 @@ as an help command.
 
 * Writing documentation
 Spacemacs provides an example layer =README.org= file in
-=~/.emacs.d/core/templates/layer-README.template=.
+=~/.emacs.d/core/templates/README.org.template=.
 
 ** Spacing in documentation
 Spacemacs tries to keep the documentation consistent between all layers by

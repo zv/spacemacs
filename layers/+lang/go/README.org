@@ -1,4 +1,5 @@
-#+TITLE: GO contribution layer for Spacemacs
+#+TITLE: GO layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/go.png]]
 
@@ -15,29 +16,32 @@
    - [[Go Oracle][Go Oracle]]
 
 * Description
-
 This layer adds extensive support for go.
 
 ** Features:
-- gofmt on file save
-- Auto-completion using [[https://github.com/nsf/gocode/tree/master/emacs][go-autocomplete]]
+- gofmt/goimports on file save
+- Auto-completion using [[https://github.com/nsf/gocode/tree/master/emacs][go-autocomplete]] (with the =auto-completion= layer)
 - Source analysis using [[http://golang.org/s/oracle-user-manual][go-oracle]]
 
 * Install
 ** Pre-requisites
-
 You will need =gocode= and =godef=:
 
 #+BEGIN_SRC sh
   go get -u -v github.com/nsf/gocode
   go get -u -v github.com/rogpeppe/godef
   go get -u -v golang.org/x/tools/cmd/oracle
+  go get -u -v golang.org/x/tools/cmd/gorename
 #+END_SRC
 
-Make sure that =gocode= executable is in your PATH.
+Make sure that =gocode= executable is in your PATH. For information about
+setting up =$PATH=, check out the corresponding section in the FAQ (~SPC h SPC
+$PATH RET~).
+
+For best results, make sure that the =auto-completion= and =syntax-checking=
+layers are enabled as well.
 
 ** Layer
-
 To use this contribution add it to your =~/.spacemacs=
 
 #+BEGIN_SRC emacs-lisp

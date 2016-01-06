@@ -1,36 +1,35 @@
 (setq osx-packages
-  '(
-    pbcopy
-    launchctl
-    reveal-in-osx-finder
-    ))
+      '(
+        exec-path-from-shell
+        osx-trash
+        pbcopy
+        launchctl
+        reveal-in-osx-finder
+        helm
+        ))
 
 (when (spacemacs/system-is-mac)
-  ;; Note: `delete-by-moving-to-trash' is set to true globaly in
-  ;; `spacemacs/config.el'
-  ;; (setq trash-directory "~/.Trash/emacs") ; bare minimum
+  ;; Enable built-in trash support via finder API if available (only on Emacs
+  ;; Mac Port)
+  (when (boundp 'mac-system-move-file-to-trash-use-finder)
+    (setq mac-system-move-file-to-trash-use-finder t)))
 
-  ;; Use `trash' cli tool, if installed.
-  ;; See brew info trash (or osx-tools)
-  ;; otherwise, enable built-in support for trashing using Finder API
+(defun osx/post-init-exec-path-from-shell ()
+  ;; Use GNU ls as `gls' from `coreutils' if available.  Add `(setq
+  ;; dired-use-ls-dired nil)' to your config to suppress the Dired warning when
+  ;; not using GNU ls.  We must look for `gls' after `exec-path-from-shell' was
+  ;; initialized to make sure that `gls' is in `exec-path'
+  (when (spacemacs/system-is-mac)
+    (let ((gls (executable-find "gls")))
+      (when gls
+        (setq insert-directory-program gls
+              dired-listing-switches "-aBhl --group-directories-first")))))
 
-  (if (executable-find "trash")
-      (defun system-move-file-to-trash (file)
-        "Use `trash' to move FILE to the system/volume trash can.
-Can be installed with `brew install trash'."
-        (call-process (executable-find "trash") nil 0 nil file))
-    (setq mac-system-move-file-to-trash-use-finder t))
-
-  ;; Use `gls' if `coreutils' was installed prefixed ('g') otherwise, leave
-  ;; alone. Manually add to config `(setq dired-use-ls-dired nil)' to surpesss
-  ;; warnings, when not using `coreutils' version of 'ls' on OS X.
-  ;; See brew info coreutils
-  (when (executable-find "gls")
-    ;; maybe absolute or relative name of the `ls' program used by
-    ;; `insert-directory'.
-    (setq insert-directory-program "gls"
-          dired-listing-switches "-aBhl --group-directories-first")
-    ))
+(defun osx/init-osx-trash ()
+  (use-package osx-trash
+    :if (and (spacemacs/system-is-mac)
+             (not (boundp 'mac-system-move-file-to-trash-use-finder)))
+    :init (osx-trash-setup)))
 
 (defun osx/init-pbcopy ()
   (use-package pbcopy
@@ -44,32 +43,42 @@ Can be installed with `brew install trash'."
     :init
     (progn
       (add-to-list 'auto-mode-alist '("\\.plist$" . nxml-mode))
-      (evil-leader/set-key "al" 'launchctl))
+      (spacemacs/set-leader-keys "al" 'launchctl))
     :config
     (progn
-      (evilify launchctl-mode launchctl-mode-map
-               (kbd "q") 'quit-window
-               (kbd "s") 'tabulated-list-sort
-               (kbd "g") 'launchctl-refresh
-               (kbd "n") 'launchctl-new
-               (kbd "e") 'launchctl-edit
-               (kbd "v") 'launchctl-view
-               (kbd "l") 'launchctl-load
-               (kbd "u") 'launchctl-unload
-               (kbd "r") 'launchctl-reload
-               (kbd "S") 'launchctl-start
-               (kbd "K") 'launchctl-stop
-               (kbd "R") 'launchctl-restart
-               (kbd "D") 'launchctl-remove
-               (kbd "d") 'launchctl-disable
-               (kbd "E") 'launchctl-enable
-               (kbd "i") 'launchctl-info
-               (kbd "f") 'launchctl-filter
-               (kbd "=") 'launchctl-setenv
-               (kbd "#") 'launchctl-unsetenv
-               (kbd "h") 'launchctl-help))))
+      (evilified-state-evilify launchctl-mode launchctl-mode-map
+        (kbd "q") 'quit-window
+        (kbd "s") 'tabulated-list-sort
+        (kbd "g") 'launchctl-refresh
+        (kbd "n") 'launchctl-new
+        (kbd "e") 'launchctl-edit
+        (kbd "v") 'launchctl-view
+        (kbd "l") 'launchctl-load
+        (kbd "u") 'launchctl-unload
+        (kbd "r") 'launchctl-reload
+        (kbd "S") 'launchctl-start
+        (kbd "K") 'launchctl-stop
+        (kbd "R") 'launchctl-restart
+        (kbd "D") 'launchctl-remove
+        (kbd "d") 'launchctl-disable
+        (kbd "E") 'launchctl-enable
+        (kbd "i") 'launchctl-info
+        (kbd "f") 'launchctl-filter
+        (kbd "=") 'launchctl-setenv
+        (kbd "#") 'launchctl-unsetenv
+        (kbd "h") 'launchctl-help))))
 
 (defun osx/init-reveal-in-osx-finder ()
   (use-package reveal-in-osx-finder
     :if (spacemacs/system-is-mac)
     :commands reveal-in-osx-finder))
+
+(defun osx/pre-init-helm ()
+  ;; Use `mdfind' instead of `locate'.
+  (when (spacemacs/system-is-mac)
+    (spacemacs|use-package-add-hook helm
+      :post-config
+      ;; Disable fuzzy matchting to make mdfind work with helm-locate
+      ;; https://github.com/emacs-helm/helm/issues/799
+      (setq helm-locate-fuzzy-match nil)
+      (setq helm-locate-command "mdfind -name %s %s"))))

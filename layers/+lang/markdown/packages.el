@@ -29,8 +29,8 @@
   (use-package gh-md
     :defer t
     :init
-    (evil-leader/set-key-for-mode 'markdown-mode
-      "mcr"  'gh-md-render-buffer)))
+    (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
+      "cr"  'gh-md-render-buffer)))
 
 (defun markdown/post-init-smartparens ()
   (add-hook 'markdown-mode-hook 'smartparens-mode))
@@ -53,63 +53,73 @@ Will work on both org-mode and any mode that accepts plain html."
                (format tag (help-key-description key nil)))
             (insert (format tag ""))
             (forward-char -6))))
-      (evil-leader/set-key-for-mode 'markdown-mode
+
+      ;; Declare prefixes and bind keys
+      (dolist (prefix '(("mc" . "markdown/command")
+                        ("mh" . "markdown/header")
+                        ("mi" . "markdown/insert")
+                        ("ml" . "markdown/lists")
+                        ("mx" . "markdown/text")))
+        (spacemacs/declare-prefix-for-mode
+         'markdown-mode (car prefix) (cdr prefix)))
+      (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
         ;; Movement
-        "m{"   'markdown-backward-paragraph
-        "m}"   'markdown-forward-paragraph
+        "{"   'markdown-backward-paragraph
+        "}"   'markdown-forward-paragraph
         ;; Completion, and Cycling
-        "m]"   'markdown-complete
+        "]"   'markdown-complete
         ;; Indentation
-        "m>"   'markdown-indent-region
-        "m<"   'markdown-exdent-region
+        ">"   'markdown-indent-region
+        "<"   'markdown-exdent-region
         ;; Buffer-wide commands
-        "mc]"  'markdown-complete-buffer
-        "mcm"  'markdown-other-window
-        "mcp"  'markdown-preview
-        "mce"  'markdown-export
-        "mcv"  'markdown-export-and-preview
-        "mco"  'markdown-open
-        "mcw"  'markdown-kill-ring-save
-        "mcc"  'markdown-check-refs
-        "mcn"  'markdown-cleanup-list-numbers
+        "c]"  'markdown-complete-buffer
+        "cc"  'markdown-check-refs
+        "ce"  'markdown-export
+        "cm"  'markdown-other-window
+        "cn"  'markdown-cleanup-list-numbers
+        "co"  'markdown-open
+        "cp"  'markdown-preview
+        "cv"  'markdown-export-and-preview
+        "cw"  'markdown-kill-ring-save
         ;; headings
-        "mhi"  'markdown-insert-header-dwim
-        "mhI"  'markdown-insert-header-setext-dwim
-        "mh1"  'markdown-insert-header-atx-1
-        "mh2"  'markdown-insert-header-atx-2
-        "mh3"  'markdown-insert-header-atx-3
-        "mh4"  'markdown-insert-header-atx-4
-        "mh5"  'markdown-insert-header-atx-5
-        "mh6"  'markdown-insert-header-atx-6
-        "mh!"  'markdown-insert-header-setext-1
-        "mh@"  'markdown-insert-header-setext-2
+        "hi"  'markdown-insert-header-dwim
+        "hI"  'markdown-insert-header-setext-dwim
+        "h1"  'markdown-insert-header-atx-1
+        "h2"  'markdown-insert-header-atx-2
+        "h3"  'markdown-insert-header-atx-3
+        "h4"  'markdown-insert-header-atx-4
+        "h5"  'markdown-insert-header-atx-5
+        "h6"  'markdown-insert-header-atx-6
+        "h!"  'markdown-insert-header-setext-1
+        "h@"  'markdown-insert-header-setext-2
         ;; Insertion of common elements
-        "m-"   'markdown-insert-hr
-        "mif"  'markdown-insert-footnote
-        "mii"  'markdown-insert-image
-        "mik"  'spacemacs/insert-keybinding-markdown
-        "miI"  'markdown-insert-reference-image
-        "mil"  'markdown-insert-link
-        "miL"  'markdown-insert-reference-link-dwim
-        "miw"  'markdown-insert-wiki-link
-        "miu"  'markdown-insert-uri
+        "-"   'markdown-insert-hr
+        "if"  'markdown-insert-footnote
+        "ii"  'markdown-insert-image
+        "ik"  'spacemacs/insert-keybinding-markdown
+        "iI"  'markdown-insert-reference-image
+        "il"  'markdown-insert-link
+        "iL"  'markdown-insert-reference-link-dwim
+        "iw"  'markdown-insert-wiki-link
+        "iu"  'markdown-insert-uri
         ;; Element removal
-        "mk"   'markdown-kill-thing-at-point
+        "k"   'markdown-kill-thing-at-point
         ;; List editing
-        "mli"  'markdown-insert-list-item
+        "li"  'markdown-insert-list-item
         ;; region manipulation
-        "mxb"  'markdown-insert-bold
-        "mxi"  'markdown-insert-italic
-        "mxc"  'markdown-insert-code
-        "mxq"  'markdown-insert-blockquote
-        "mxQ"  'markdown-blockquote-region
-        "mxp"  'markdown-insert-pre
-        "mxP"  'markdown-pre-region
+        "xb"  'markdown-insert-bold
+        "xi"  'markdown-insert-italic
+        "xc"  'markdown-insert-code
+        "xC"  'markdown-insert-gfm-code-block
+        "xq"  'markdown-insert-blockquote
+        "xQ"  'markdown-blockquote-region
+        "xp"  'markdown-insert-pre
+        "xP"  'markdown-pre-region
         ;; Following and Jumping
-        "mN"   'markdown-next-link
-        "mf"   'markdown-follow-thing-at-point
-        "mP"   'markdown-previous-link
-        "m <RET>" 'markdown-jump)
+        "N"   'markdown-next-link
+        "f"   'markdown-follow-thing-at-point
+        "P"   'markdown-previous-link
+        "<RET>" 'markdown-jump)
 
       ;; Header navigation in normal state movements
       (evil-define-key 'normal markdown-mode-map
@@ -133,9 +143,9 @@ Will work on both org-mode and any mode that accepts plain html."
   (use-package mmm-mode
     :commands mmm-parse-buffer
     :init
-    (evil-leader/set-key-for-mode 'markdown-mode
+    (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
       ;; Highlight code blocks
-      "mcs"   'mmm-parse-buffer)
+      "cs"   'mmm-parse-buffer)
     :config
     (progn
       (mmm-add-classes '((markdown-python

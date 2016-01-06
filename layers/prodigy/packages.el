@@ -15,17 +15,17 @@
 (defun prodigy/init-prodigy ()
   (use-package prodigy
     :init
-    (evil-leader/set-key "aS" 'prodigy)
+    (spacemacs/set-leader-keys "aS" 'prodigy)
     :config
-    (evilify prodigy-mode prodigy-mode-map
-             "h" 'prodigy-first
-             "j" 'prodigy-next
-             "k" 'prodigy-prev
-             "l" 'prodigy-last
-             "H" 'prodigy-display-process
-             "J" 'prodigy-next-with-status
-             "K" 'prodigy-prev-with-status
-             "L" 'prodigy-start
-             "d" 'prodigy-jump-dired
-             "g" 'prodigy-jump-magit
-             "Y" 'prodigy-copy-cmd)))
+    (evilified-state-evilify prodigy-mode prodigy-mode-map
+      "h" 'prodigy-first
+      "j" 'prodigy-next
+      "k" 'prodigy-prev
+      "l" 'prodigy-last
+      "H" 'prodigy-display-process
+      "J" 'prodigy-next-with-status
+      "K" 'prodigy-prev-with-status
+      "L" 'prodigy-start
+      "d" 'prodigy-jump-dired
+      "g" 'prodigy-jump-magit
+      "Y" 'prodigy-copy-cmd)))

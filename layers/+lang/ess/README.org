@@ -1,4 +1,5 @@
-#+TITLE: R (ESS) contribution layer for Spacemacs
+#+TITLE: R (ESS) layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../../../css/readtheorg.css" />
 
 [[file:img/r.jpg]]
 
@@ -10,24 +11,16 @@
  - [[Options][Options]]
 
 * Install
-
 To use this contribution add it to your =~/.spacemacs=
 
 #+BEGIN_SRC emacs-lisp
 (setq-default dotspacemacs-configuration-layers '(ess))
 #+END_SRC
 
-*Important:*
-In order to speed up the boot time of =Spacemacs=, =ESS= must be loaded
-manually via the key binding: ~SPC e s s~
-
 * Key Bindings
 
 ** Inferior REPL process
-
-Start an =R= inferior REPL process with ~SPC m s i~.
-
-Send code to inferior process commands:
+Send code to inferior process with these commands:
 
 | Key Binding | Description                                                      |
 |-------------+------------------------------------------------------------------|
@@ -52,7 +45,7 @@ Send code to inferior process commands:
 | ~CTRL+k~    | previous item in REPL history                                    |
 
 ** Helpers
-
+Helpers for inspecting objects at point are available in R buffers only.
 | Key Binding | Description                                                         |
 |-------------+---------------------------------------------------------------------|
 | ~SPC m h d~ | view data under point using [ess-R-data-view][ess-R-data-view]      |
@@ -60,10 +53,19 @@ Send code to inferior process commands:
 | ~SPC m h t~ | view table using [ess-R-data-view][ess-R-data-view]                 |
 
 * Options
-
-=ess-smart-equals= is disabled by default. In order to enable it, set in your =~/.spacemacs=
+=ess-smart-equals= is disabled by default. In order to enable it, set in your
+=~/.spacemacs=
 
 #+BEGIN_SRC emacs-lisp
   (setq-default dotspacemacs-configuration-layers '((ess :variables
                                                          ess-enable-smart-equals t)))
 #+END_SRC
+
+To turn off the automatic replacement of underscores by =<-=, add the following
+hook:
+
+#+begin_src emacs-lisp
+  (add-hook 'ess-mode-hook
+            (lambda ()
+              (ess-toggle-underscore nil)))
+#+end_src

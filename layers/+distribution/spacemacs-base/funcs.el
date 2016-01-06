@@ -57,11 +57,11 @@
     (apply 'message msg args)))
 
 (defun spacemacs/system-is-mac ()
-  (string-equal system-type "darwin"))
+  (eq system-type 'darwin))
 (defun spacemacs/system-is-linux ()
-  (string-equal system-type "gnu/linux"))
+  (eq system-type 'gnu/linux))
 (defun spacemacs/system-is-mswindows ()
-  (string-equal system-type "windows-nt"))
+  (eq system-type 'windows-nt))
 
 (defun spacemacs/jump-in-buffer ()
   (interactive)
@@ -111,7 +111,7 @@ the current state and point position."
   (let ((counter (or count 1)))
     (while (> counter 0)
       (join-line 1)
-      (sp-newline)
+      (newline-and-indent)
       (setq counter (1- counter)))))
 
 ;; from Prelude
@@ -312,18 +312,28 @@ argument takes the kindows rotate backwards."
 ;; from magnars
 (defun spacemacs/sudo-edit (&optional arg)
   (interactive "p")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+  (let ((fname (if (or arg (not buffer-file-name)) (read-file-name "File: ") buffer-file-name)))
+    (find-file
+     (cond ((string-match-p "^/ssh:" fname)
+            (with-temp-buffer
+              (insert fname)
+              (search-backward ":")
+              (let ((last-match-end nil)
+                    (last-ssh-hostname nil))
+                (while (string-match "@\\\([^:|]+\\\)" fname last-match-end)
+                  (setq last-ssh-hostname (or (match-string 1 fname) last-ssh-hostname))
+                  (setq last-match-end (match-end 0)))
+                (insert (format "|sudo:%s" (or last-ssh-hostname "localhost"))))
+              (buffer-string)))
+           (t (concat "/sudo:root@localhost:" fname))))))
 
 ;; found at http://emacswiki.org/emacs/KillingBuffers
 (defun spacemacs/kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
-  (let (name (buffer-name))
-    (when (yes-or-no-p (format "Killing all buffers except \"%s\" ? " buffer-file-name))
-      (mapc 'kill-buffer (delq (current-buffer) (buffer-list)))
-      (message "Buffers deleted!"))))
+  (when (yes-or-no-p (format "Killing all buffers except \"%s\"? " (buffer-name)))
+    (mapc 'kill-buffer (delq (current-buffer) (buffer-list)))
+    (message "Buffers deleted!")))
 
 ;; from http://dfan.org/blog/2009/02/19/emacs-dedicated-windows/
 (defun spacemacs/toggle-current-window-dedication ()
@@ -371,10 +381,20 @@ argument takes the kindows rotate backwards."
   (let ((newbuf (generate-new-buffer-name "untitled")))
     (switch-to-buffer newbuf)))
 
+;; from https://gist.github.com/timcharper/493269
+(defun spacemacs/split-window-vertically-and-switch ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1))
+
+(defun spacemacs/split-window-horizontally-and-switch ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1))
+
 (defun spacemacs/layout-triple-columns ()
   " Set the layout to triple columns. "
   (interactive)
-  (golden-ratio-mode 0)
   (delete-other-windows)
   (dotimes (i 2) (split-window-right))
   (balance-windows))
@@ -382,14 +402,11 @@ argument takes the kindows rotate backwards."
 (defun spacemacs/layout-double-columns ()
   " Set the layout to double columns. "
   (interactive)
-  (golden-ratio-mode 1)
   (delete-other-windows)
   (split-window-right))
 
-(defun spacemacs/home ()
-  "Go to home Spacemacs buffer"
-  (interactive)
-  (switch-to-buffer "*spacemacs*"))
+(defalias 'spacemacs/home 'spacemacs-buffer/goto-buffer
+  "Go to home Spacemacs buffer")
 
 (defun spacemacs/insert-line-above-no-indent (count)
   (interactive "p")
@@ -475,7 +492,6 @@ dotspacemacs-persistent-server to be t"
 (defun spacemacs/frame-killer ()
   "Kill server buffer and hide the main Emacs window"
   (interactive)
-  (server-kill-buffer)
   (condition-case nil
       (delete-frame nil 1)
       (error
@@ -555,13 +571,6 @@ current window."
       (switch-to-buffer (car (evil-alternate-buffer)))
     (switch-to-buffer (other-buffer (current-buffer) t))))
 
-(defun spacemacs/highlight-TODO-words ()
-  "Highlight keywords for  "
-  (interactive)
-  (font-lock-add-keywords
-   nil '(("\\<\\(\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):\\)"
-          1 font-lock-warning-face t))))
-
 (defun current-line ()
   "Return the line at point as a string."
   (buffer-substring (line-beginning-position) (line-end-position)))
@@ -620,31 +629,6 @@ current window."
   (clipboard-yank)
   (deactivate-mark))
 
-;; hide mode line
-;; from http://bzg.fr/emacs-hide-mode-line.html
-(defvar-local hidden-mode-line-mode nil)
-(define-minor-mode hidden-mode-line-mode
-  "Minor mode to hide the mode-line in the current buffer."
-  :init-value nil
-  :global t
-  :variable hidden-mode-line-mode
-  :group 'editing-basics
-  (if hidden-mode-line-mode
-      (setq hide-mode-line mode-line-format
-            mode-line-format nil)
-    (setq mode-line-format hide-mode-line
-          hide-mode-line nil))
-  (force-mode-line-update)
-  ;; Apparently force-mode-line-update is not always enough to
-  ;; redisplay the mode-line
-  (redraw-display)
-  (when (and (called-interactively-p 'interactive)
-             hidden-mode-line-mode)
-    (run-with-idle-timer
-     0 nil 'message
-     (concat "Hidden Mode Line Mode enabled.  "
-             "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
-
 ;; BEGIN align functions
 
 ;; modified function from http://emacswiki.org/emacs/AlignCommands
@@ -691,15 +675,6 @@ the right."
 (spacemacs|create-align-repeat-x "right-paren" ")" t)
 
 ;; END align functions
-
-(defun spacemacs/write-file ()
-  "Write the file if visiting a file.
-   Otherwise ask for new filename."
-  (interactive)
-  (if (buffer-file-name)
-      (call-interactively 'evil-write)
-    (call-interactively 'write-file)))
-
 
 (defun spacemacs/dos2unix ()
   "Converts the current buffer to UNIX file format."
@@ -815,7 +790,7 @@ first element is the symbol `image')."
   "Count how many times each word is used in the region.
  Punctuation is ignored."
   (interactive "r")
-  (let (words)
+  (let (words alist_words_compare (formated ""))
     (save-excursion
       (goto-char start)
       (while (re-search-forward "\\w+" end t)
@@ -824,19 +799,27 @@ first element is the symbol `image')."
           (if cell
               (setcdr cell (1+ (cdr cell)))
             (setq words (cons (cons word 1) words))))))
+    (defun alist_words_compare (a b)
+      "Compare elements from an associative list of words count.
+Compare them on count first,and in case of tie sort them alphabetically."
+      (let ((a_key (car a))
+            (a_val (cdr a))
+            (b_key (car b))
+            (b_val (cdr b)))
+        (if (eq a_val b_val)
+            (string-lessp a_key b_key)
+          (> a_val b_val))))
+    (setq words (cl-sort words 'alist_words_compare))
+    (while words
+      (let* ((word (pop words))
+             (name (car word))
+             (count (cdr word)))
+        (setq formated (concat formated (format "[%s: %d], " name count)))))
     (when (interactive-p)
-      (message "%S" words))
+      (if (> (length formated) 2)
+          (message (substring formated 0 -2))
+        (message "No words.")))
     words))
-
-;; byte compile elisp files
-(defun byte-compile-current-buffer ()
-  "`byte-compile' current buffer if it's emacs-lisp-mode and compiled file exists."
-  (interactive)
-  (when (and (eq major-mode 'emacs-lisp-mode)
-             (file-exists-p (byte-compile-dest-file buffer-file-name)))
-    (byte-compile-file buffer-file-name)))
-
-(add-hook 'after-save-hook 'byte-compile-current-buffer)
 
 ;; indent on paste
 ;; from Prelude: https://github.com/bbatsov/prelude
@@ -890,3 +873,31 @@ is nonempty."
         while (string-match regexp str start)
         do (setq start (match-end 0))
         finally return count))
+
+(defun spacemacs/close-compilation-window ()
+  "Close the window containing the '*compilation*' buffer."
+  (interactive)
+  (delete-windows-on "*compilation*"))
+
+(defun spacemacs//set-evil-shift-width ()
+  "Set the value of `evil-shift-width' based on the indentation settings of the
+current major mode."
+  (let ((shift-width
+         (catch 'break
+           (dolist (test spacemacs--indent-variable-alist)
+             (let ((mode (car test))
+                   (val (cdr test)))
+               (when (or (and (symbolp mode) (derived-mode-p mode))
+                         (and (listp mode) (apply 'derived-mode-p mode))
+                         (eq 't mode))
+                 (when (not (listp val))
+                   (setq val (list val)))
+                 (dolist (v val)
+                   (cond
+                    ((integerp v) (throw 'break v))
+                    ((and (symbolp v) (boundp v))
+                     (throw 'break (symbol-value v))))))))
+           (throw 'break (default-value 'evil-shift-width)))))
+    (when (and (integerp shift-width)
+               (< 0 shift-width))
+      (setq-local evil-shift-width shift-width))))

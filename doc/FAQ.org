@@ -1,19 +1,25 @@
-#+SETUPFILE: theme-readtheorg.setup 
+#+TITLE: Frequently Asked Questions
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
 
 * FAQ                                                       :TOC_4_org:noexport:
  - [[Common][Common]]
    - [[Which version of Spacemacs am I running?][Which version of Spacemacs am I running?]]
    - [[What is the official pronunciation of Spacemacs?][What is the official pronunciation of Spacemacs?]]
    - [[Why are packages installed with =package-install= automatically deleted by Spacemacs when it boots?][Why are packages installed with =package-install= automatically deleted by Spacemacs when it boots?]]
+   - [[How to fix package download errors when installing Spacemacs ?][How to fix package download errors when installing Spacemacs ?]]
    - [[The Spacemacs banner is ugly, what should I do?][The Spacemacs banner is ugly, what should I do?]]
    - [[The powerline separators are ugly, how can I fix them?][The powerline separators are ugly, how can I fix them?]]
    - [[The powerline separators have no anti-aliasing, what can I do?][The powerline separators have no anti-aliasing, what can I do?]]
    - [[Why is after-init-hook not executed?][Why is after-init-hook not executed?]]
    - [[What is the difference between =spacemacs-base= and =spacemacs= distributions?][What is the difference between =spacemacs-base= and =spacemacs= distributions?]]
-   - [[How can I change or define an alias for an =evil-leader= prefix?][How can I change or define an alias for an =evil-leader= prefix?]]
    - [[Should I place my settings in =user-init= or =user-config=?][Should I place my settings in =user-init= or =user-config=?]]
    - [[Why do some of my =org=-related settings cause problems?][Why do some of my =org=-related settings cause problems?]]
+   - [[Why is Spacemacs hanging on startup?][Why is Spacemacs hanging on startup?]]
+   - [[Why does =helm-M-x= (~SPC :~) not accept the prefix argument?][Why does =helm-M-x= (~SPC :~) not accept the prefix argument?]]
+   - [[Why does my color theme not render correctly in terminal mode?][Why does my color theme not render correctly in terminal mode?]]
+   - [[Why do I get =(wrong-type-argument arrayp nil)= errors on startup?][Why do I get =(wrong-type-argument arrayp nil)= errors on startup?]]
  - [[How do I...][How do I...]]
+   - [[Install a package not provided by a layer?][Install a package not provided by a layer?]]
    - [[Disable a package completely?][Disable a package completely?]]
    - [[Disable a package only for a specific major-mode?][Disable a package only for a specific major-mode?]]
    - [[Disable company for a specific major-mode?][Disable company for a specific major-mode?]]
@@ -22,10 +28,16 @@
    - [[Disable evilification of a mode?][Disable evilification of a mode?]]
    - [[Include underscores in word motions?][Include underscores in word motions?]]
    - [[Setup =$PATH=?][Setup =$PATH=?]]
+   - [[Change or define an alias for a leader key?][Change or define an alias for a leader key?]]
+   - [[Restore the sentence delimiter to two spaces?][Restore the sentence delimiter to two spaces?]]
+   - [[Prevent the visual selection overriding my system clipboard?][Prevent the visual selection overriding my system clipboard?]]
+   - [[Make spell-checking support curly quotes (or any other character)?][Make spell-checking support curly quotes (or any other character)?]]
+   - [[Use Spacemacs as the =$EDITOR= for git commits?][Use Spacemacs as the =$EDITOR= for git commits?]]
  - [[Windows][Windows]]
    - [[Why do the fonts look crappy on Windows?][Why do the fonts look crappy on Windows?]]
    - [[Why is there no Spacemacs logo in the startup buffer?][Why is there no Spacemacs logo in the startup buffer?]]
    - [[Why are all packages unavailable?][Why are all packages unavailable?]]
+   - [[The powerline isn't shown correctly when Spacemacs is used within =PuTTY=.][The powerline isn't shown correctly when Spacemacs is used within =PuTTY=.]]
  - [[OS X][OS X]]
    - [[Why are the powerline colors not correct on OS X?][Why are the powerline colors not correct on OS X?]]
 
@@ -38,8 +50,17 @@ may also just type ~SPC f e v~.
 As it is written, that is _space_ then _macs_.
 
 ** Why are packages installed with =package-install= automatically deleted by Spacemacs when it boots?
-To declare new packages you have to create a new configuration layer, see the
-[[file:QUICK_START.org][quick start guide]].
+To declare new packages you have to create a new configuration layer or
+add the package name to the variable =dotspacemacs-additonal-packages=
+of your dotfile, see the [[file:QUICK_START.org][quick start guide]] for more info.
+
+** How to fix package download errors when installing Spacemacs ?
+Since 0.105.0 HTTPS protocol is used by default to download packages. If your
+environment does not allow HTTPS to reach ELPA repositories then you can start
+Emacs with the =--insecure= argument for force the usage of HTTP non secured
+protocol.
+Then you can set the variable =dotspacemacs-elpa-https= to =nil= in your
+dotfile to remove the need to start Emacs with =--insecure== argument.
 
 ** The Spacemacs banner is ugly, what should I do?
 Install the default font supported by Spacemacs or choose a fixed width font.
@@ -57,7 +78,7 @@ section in the font section of the [[file:DOCUMENTATION.org][documentation]].
 
 ** Why is after-init-hook not executed?
 Don't launch Spacemacs with =emacs -q -l init.el= command. This command will run
-the hooked function in =after-init-hook= before the evaluation of the passed =-l
+the hooked functions in =after-init-hook= before the evaluation of the passed =-l
 init.el= file.
 
 ** What is the difference between =spacemacs-base= and =spacemacs= distributions?
@@ -70,18 +91,6 @@ Set the distribution with =dotspacemacs-distribution= variable. The default is
 check out the =packages.el= file in the respective folders in the
 =+distribution= folder of the =layers/= directory.
 
-** How can I change or define an alias for an =evil-leader= prefix?
-It is possible to change an =evil-leader= prefix by binding its keymap to
-another sequence. For instance, if you want to switch ~SPC l~
-(=evil-avy-goto-line=) with ~SPC L~ (=perspectives= layer) to make the later
-easier to reach, you can use:
-
-#+begin_src emacs-lisp
-(evil-leader/set-key
-  "l" (lookup-key evil-leader--default-map "L")
-  "L" 'evil-avy-goto-line)
-#+end_src
-
 ** Should I place my settings in =user-init= or =user-config=?
 Any variable that layer configuration code will *read* and *act on* must be set
 in =user-init=, and any variable that Spacemacs explicitly sets but you wish to
@@ -90,12 +99,74 @@ in =user-init=, and any variable that Spacemacs explicitly sets but you wish to
 Anything that isn't just setting a variable should 99% be in =user-config=.
 
 ** Why do some of my =org=-related settings cause problems?
-Since version 0.104, spacemacs uses the `org` version from the org ELPA
-repository instead of the one shipped with emacs. Then, any `org` related code
-should not be loaded before `dotspacemacs/user-config`, otherwise both versions
+Since version 0.104, spacemacs uses the =org= version from the org ELPA
+repository instead of the one shipped with emacs. Then, any =org= related code
+should not be loaded before =dotspacemacs/user-config=, otherwise both versions
 will be loaded and will conflict.
 
+Because of autoloading, calling to =org= functions will trigger the loading up
+of the =org= shipped with emacs wich will induce conflicts.
+One way to avoid conflict is to wrap your =org= config code in a
+=with-eval-after-load= block like this:
+
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'org
+    ;; here goes your Org config :)
+    ;; ....
+    )    
+#+END_SRC
+
+** Why is Spacemacs hanging on startup?
+This is probably related to Helm using Tramp which tries to figure out some
+SSH/DNS settings at startup. The root cause is probably your ISP redirecting
+non-existing addresses to their own servers.
+
+Try using these settings in the ~user-init~ function in your ~.spacemacs~
+configuration:
+
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+#+END_SRC
+
+See [[https://github.com/syl20bnr/spacemacs/issues/3422#issuecomment-148919047][issue #3422]] and [[https://github.com/emacs-helm/helm/issues/1000#issuecomment-119487649][helm issue #1000]] for details. If for any reason this code is
+not working, you can try to put these settings directly in =~/.ssh/config=:
+
+#+begin_SRC ssh
+Host *
+ControlMaster auto
+ControlPath ~/.ssh/master -%r@%h:%p
+ControlPersist = no
+#+end_SRC
+
+** Why does =helm-M-x= (~SPC :~) not accept the prefix argument?
+If you try to run =helm-M-x= with the prefix argument (i.e. ~SPC u SPC :~) it
+will fail with this message:
+
+#+begin_verse
+Error: Specifying a prefix arg before calling helm-M-x
+#+end_verse
+
+Instead, call =helm-M-x= first, select the command you want to run, and press
+~C-u~ before pressing ~RETURN~. For instance: ~SPC : org-reload C-u RET~
+
+** Why does my color theme not render correctly in terminal mode?
+In the terminal version of Emacs, color themes will not render correctly as
+colors are rendered by the terminal and not by emacs. You will probably have to
+change your terminal color palette. More explanations can be found on
+[[https://github.com/sellout/emacs-color-theme-solarized#important-note-for-terminal-users][emacs-color-theme-solarized webpage]].
+
+** Why do I get =(wrong-type-argument arrayp nil)= errors on startup?
+This is most likely caused by a corrupted package archive. Try deleting your
+=~/.emacs.d/elpa/archives/= folder and restart Emacs.
+
 * How do I...
+** Install a package not provided by a layer?
+Spacemacs provides a variable in the =dotspacemacs/layers= function in
+=.spacemacs= called =dotspacemacs-additional-packages=. Just add a package name
+to the list and it will be installed when you reload your configuration with
+~SPC f e R~, or at the next Spacemacs launch.
+
 ** Disable a package completely?
 To completely disable a package and effectively uninstalling it even if
 it is part of your used layers, look for the variable
@@ -120,7 +191,7 @@ remove =flycheck= support in python buffers, look for the function
 
 ** Disable company for a specific major-mode?
 It may be handy to disable =company= for a given mode if you plan on
-configuring =auto-complete= instead. On easy way to do it is to use the
+configuring =auto-complete= instead. One easy way to do it is to use the
 macro =spacemacs|disable-company= in the function =dotspacemacs/user-config=
 of your dotfile. The following snippet disables company for
 =python-mode=:
@@ -178,7 +249,7 @@ binding in the mode's map, e.g. for =magit-status-mode=,
 #+begin_src emacs-lisp
   (with-eval-after-load 'magit
     (define-key magit-status-mode-map
-      (kbd dotspacemacs-leader-key) evil-leader--default-map))
+      (kbd dotspacemacs-leader-key) spacemacs-default-map))
 #+end_src
 
 ** Include underscores in word motions?
@@ -238,6 +309,76 @@ In that case you have the option of updating the value of =exec-path= in the
 (add-to-list 'exec-path "~/.local/bin/")
 #+END_SRC
 
+** Change or define an alias for a leader key?
+It is possible to change a leader key by binding its keymap to another sequence.
+For instance, if you want to switch ~SPC S~ (spelling) with ~SPC d~ (used by
+dash) to make the former easier to reach, you can use:
+
+#+begin_src emacs-lisp
+(defun dear-leader/swap-keys (key1 key2)
+  (let ((map1 (lookup-key spacemacs-default-map key1))
+        (map2 (lookup-key spacemacs-default-map key2)))
+    (spacemacs/set-leader-keys key1 map2 key2 map1)))
+(dear-leader/swap-keys "S" "d")
+#+end_src
+
+If you want to define your own alias, like using ~SPC é~ (because it's a not
+used key on your keyboard-layout for instance) for accessing ~SPC w~ (windows
+management), you can use this:
+
+#+begin_src emacs-lisp
+(defun dear-leader/alias-of (key1 key2)
+  (let ((map (lookup-key spacemacs-default-map key2)))
+    (spacemacs/set-leader-keys key1 map)))
+(dear-leader/alias-of "é" "w")
+#+end_src
+
+** Restore the sentence delimiter to two spaces?
+To restore the sentence delimiter to two spaces, add the following code to the
+=dotspacemacs/user-init= function of your =.spacemacs=:
+
+#+begin_src emacs-lisp
+(setq sentence-end-double-space t)
+#+end_src
+
+** Prevent the visual selection overriding my system clipboard?
+On some operating systems, there is only one clipboard for both *copied* and
+*selected* texts. This has the consequence that visual *selection* – which
+should normally be saved to the /PRIMARY/ clipboard – overrides the /SYSTEM/
+clipboard, where normally goes the *copied* text. This can be corrected by
+adding the following code to the =dotspacemacs/user-config= of your
+=.spacemacs=:
+
+#+begin_src emacs-lisp
+(fset 'evil-visual-update-x-selection 'ignore)
+#+end_src
+
+** Make spell-checking support curly quotes (or any other character)?
+To have spell-checking support curly quotes (or any other character), you need
+to add a new entry to =ispell-local-dictionary-alist=, by adding for example the
+following code in the =dotspacemacs/user-config= of your =.spacemacs=:
+
+#+begin_SRC emacs-lisp
+(add-to-list 'ispell-local-dictionary-alist
+  (quote ("my_english" "[[:alpha:]]" "[^[:alpha:]]" "['’]" t ("-d" "en_US") nil utf-8)))
+#+end_SRC
+
+You can then add any regular expression you want in the fourth argument (i.e.
+add a symbol within =['’]=) to make it supported. Consult the help of
+=ispell-dictionary-alist= for more details about the possibilities.
+
+You finally have to set =my_english= as your =ispell-local-dictionary= in order
+to use the dictionary supporting your newly added characters.
+
+** Use Spacemacs as the =$EDITOR= for git commits?
+Spacemacs can be used as the =$EDITOR= (or =$GIT_EDITOR=) for editing git
+commits messages. To enable this you have to add the following line to your
+=dotspacemacs/user-config=:
+
+#+begin_src emacs-lisp
+(global-git-commit-mode t)
+#+end_src
+
 * Windows
 ** Why do the fonts look crappy on Windows?
 You can install [[https://code.google.com/p/mactype/][MacType]] on Windows to get very nice looking fonts. It is
@@ -257,6 +398,9 @@ Check if your Emacs has HTTPS capabilities by doing =M-:= and then:
 
 If this returns =nil=, you need to install the GnuTLS DDL file in the same
 directory as Emacs. See [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-gnutls.html#Help-For-Users][here]] for instructions.
+
+** The powerline isn't shown correctly when Spacemacs is used within =PuTTY=.
+You can follow [[http://mschulte.nl/posts/using-powerline-in-PuTTY.html][this explanation]] explaining how to correct this.
 
 * OS X
 ** Why are the powerline colors not correct on OS X?

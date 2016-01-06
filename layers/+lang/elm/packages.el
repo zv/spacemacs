@@ -56,53 +56,60 @@
         (let* ((fname (format "%s.js" (downcase (file-name-base (buffer-file-name))))))
           (elm-compile--file (elm--buffer-local-file-name) fname)))
 
-      (defun spacemacs/push-decl-elm-repl-focus ()
+      (defun spacemacs/elm-repl-push-decl-focus ()
         "Send current function to the REPL and focus it in insert state."
         (interactive)
-        (push-decl-elm-repl)
+        (elm-repl-push-decl)
         (run-elm-interactive)
         (evil-insert-state))
 
-      (defun spacemacs/push-elm-repl-focus ()
+      (defun spacemacs/elm-repl-push-focus ()
         "Send current region to the REPL and focus it in insert state."
-        (push-elm-repl)
+        (elm-repl-push)
         (run-elm-interactive)
         (evil-insert-state))
 
-      (evil-leader/set-key-for-mode 'elm-mode
+      (spacemacs/set-leader-keys-for-major-mode 'elm-mode
         ;; make
-        "mcb" 'elm-compile-buffer
-        "mcB" 'spacemacs/elm-compile-buffer-output
-        "mcm" 'elm-compile-main
+        "cb" 'elm-compile-buffer
+        "cB" 'spacemacs/elm-compile-buffer-output
+        "cm" 'elm-compile-main
 
         ;; oracle
-        "mht" 'elm-oracle-type-at-point
+        "ht" 'elm-oracle-type-at-point
 
         ;; repl
-        "msi" 'load-elm-repl
-        "msf" 'push-decl-elm-repl
-        "msF" 'spacemacs/push-decl-elm-repl-focus
-        "msr" 'push-elm-repl
-        "msR" 'spacemacs/push-elm-repl-focus
+        "si" 'elm-repl-load
+        "sf" 'elm-repl-push-decl
+        "sF" 'spacemacs/elm-repl-push-decl-focus
+        "sr" 'elm-repl-push
+        "sR" 'spacemacs/elm-repl-push-focus
 
         ;; reactor
-        "mRn" 'elm-preview-buffer
-        "mRm" 'elm-preview-main
+        "Rn" 'elm-preview-buffer
+        "Rm" 'elm-preview-main
 
         ;; package
-        "mpi" 'elm-import
-        "mpc" 'elm-package-catalog
-        "mpd" 'elm-documentation-lookup)
+        "pi" 'elm-import
+        "pc" 'elm-package-catalog
+        "pd" 'elm-documentation-lookup)
 
-      (evilify elm-package-mode elm-package-mode-map
-               "g" 'elm-package-refresh
-               "n" 'elm-package-next
-               "p" 'elm-package-prev
-               "v" 'elm-package-view
-               "m" 'elm-package-mark
-               "u" 'elm-package-unmark
-               "x" 'elm-package-install
-               "q" 'quit-window))))
+      (dolist (x '(("mR" . "reactor")
+                   ("mc" . "compile")
+                   ("mh" . "help")
+                   ("mp" . "package")
+                   ("ms" . "repl")))
+        (spacemacs/declare-prefix-for-mode 'elm-mode (car x) (cdr x)))
+
+      (evilified-state-evilify elm-package-mode elm-package-mode-map
+        "g" 'elm-package-refresh
+        "n" 'elm-package-next
+        "p" 'elm-package-prev
+        "v" 'elm-package-view
+        "m" 'elm-package-mark
+        "u" 'elm-package-unmark
+        "x" 'elm-package-install
+        "q" 'quit-window))))
 
 (defun elm/pre-init-popwin ()
   (spacemacs|use-package-add-hook popwin

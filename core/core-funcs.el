@@ -10,6 +10,9 @@
 ;;
 ;;; License: GPLv3
 
+(defvar configuration-layer--protected-packages)
+(defvar dotspacemacs-filepath)
+
 (defun spacemacs/load-or-install-protected-package (pkg &optional log file-to-load)
   "Load PKG package, and protect it against being deleted as an orphan.
 See `spacemacs/load-or-install-package' for more information."
@@ -20,7 +23,7 @@ See `spacemacs/load-or-install-package' for more information."
   "Load PKG package. PKG will be installed if it is not already installed.
 Whenever the initial require fails the absolute path to the package
 directory is returned.
-If LOG is non-nil a message is displayed in spacemacs-mode buffer.
+If LOG is non-nil a message is displayed in spacemacs-buffer-mode buffer.
 FILE-TO-LOAD is an explicit file to load after the installation."
   (let ((warning-minimum-level :error))
     (condition-case nil
@@ -37,7 +40,7 @@ FILE-TO-LOAD is an explicit file to load after the installation."
              (spacemacs-buffer/append
               (format "(Bootstrap) Installing %s...\n" pkg))
              (spacemacs//redisplay))
-           (package-refresh-contents)
+           (configuration-layer/retrieve-package-archives 'quiet)
            (package-install pkg)
            (setq pkg-elpa-dir (spacemacs//get-package-directory pkg)))
          (require pkg nil 'noerror)
@@ -49,7 +52,7 @@ FILE-TO-LOAD is an explicit file to load after the installation."
   "Return the directory of PKG. Return nil if not found."
   (let ((elpa-dir (concat user-emacs-directory "elpa/")))
     (when (file-exists-p elpa-dir)
-      (let ((dir (reduce (lambda (x y) (if x x y))
+      (let ((dir (cl-reduce (lambda (x y) (if x x y))
                          (mapcar (lambda (x)
                                    (when (string-match
                                           (concat "/"
@@ -111,7 +114,7 @@ and its values are removed."
 ;; From http://stackoverflow.com/questions/2321904/elisp-how-to-save-data-in-a-file
 (defun spacemacs/dump (varlist buffer)
   "insert into buffer the setq statement to recreate the variables in VARLIST"
-  (loop for var in varlist do
+  (cl-loop for var in varlist do
         (print (list 'setq var (list 'quote (symbol-value var)))
                buffer)))
 
@@ -128,12 +131,12 @@ and its values are removed."
 Supported properties:
 
 `:evil-leader STRING'
-    One or several key sequence strings to be set with `evil-leader/set-key'.
+    One or several key sequence strings to be set with `spacemacs/set-leader-keys .
 
 `:evil-leader-for-mode CONS CELL'
     One or several cons cells (MODE . KEY) where MODE is a major-mode symbol
     and KEY is a key sequence string to be set with
-    `evil-leader/set-key-for-mode'.
+    `spacemacs/set-leader-keys-for-major-mode'.
 
 `:global-key STRING'
     One or several key sequence strings to be set with `global-set-key'.
@@ -147,10 +150,10 @@ Supported properties:
         (def-key (spacemacs/mplist-get props :define-key)))
     `((unless (null ',evil-leader)
         (dolist (key ',evil-leader)
-          (evil-leader/set-key key ',func)))
+          (spacemacs/set-leader-keys key ',func)))
       (unless (null ',evil-leader-for-mode)
         (dolist (val ',evil-leader-for-mode)
-          (evil-leader/set-key-for-mode
+          (spacemacs/set-leader-keys-for-major-mode
             (car val) (cdr val) ',func)))
       (unless (null ',global-key)
         (dolist (key ',global-key)
@@ -173,9 +176,9 @@ Supported properties:
 
   (cond
    ((eq expand-scope 'subtree)
-    (show-subtree))
+    (outline-show-subtree))
    ((eq expand-scope 'all)
-    (show-all))
+    (outline-show-all))
    (t nil))
 
   ;; Make ~SPC ,~ work, reference:
@@ -227,6 +230,38 @@ result, incrementing passed-tests and total-tests."
             (when (boundp 'passed-tests) (setq passed-tests (1+ passed-tests)))
             (insert (format "*** PASS: %s\n" var)))
         (insert (propertize (format "*** FAIL: %s\n" var) 'font-lock-face 'font-lock-warning-face))))))
+
+;; hide mode line
+;; from http://bzg.fr/emacs-hide-mode-line.html
+(defvar-local hidden-mode-line-mode nil)
+(defvar-local hide-mode-line nil)
+(define-minor-mode hidden-mode-line-mode
+  "Minor mode to hide the mode-line in the current buffer."
+  :init-value nil
+  :global t
+  :variable hidden-mode-line-mode
+  :group 'editing-basics
+  (if hidden-mode-line-mode
+      (setq hide-mode-line mode-line-format
+            mode-line-format nil)
+    (setq mode-line-format hide-mode-line
+          hide-mode-line nil))
+  (force-mode-line-update)
+  ;; Apparently force-mode-line-update is not always enough to
+  ;; redisplay the mode-line
+  (redraw-display)
+  (when (and (called-interactively-p 'interactive)
+             hidden-mode-line-mode)
+    (run-with-idle-timer
+     0 nil 'message
+     (concat "Hidden Mode Line Mode enabled.  "
+             "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
+
+(defun spacemacs/recompile-elpa ()
+  "Recompile packages in elpa directory. Useful if you switch
+Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
 
 (provide 'core-funcs)
 

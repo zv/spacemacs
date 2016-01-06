@@ -12,7 +12,7 @@
 
 ;; Command prefixes
 
-(setq github/key-binding-prefixes '(("gf" . "github/file")
-                                    ("gg" . "github/gist")))
+(setq github/key-binding-prefixes '(("gh" . "github")
+                                    ("gg" . "github gist")))
 (mapc (lambda (x) (spacemacs/declare-prefix (car x) (cdr x)))
       github/key-binding-prefixes)

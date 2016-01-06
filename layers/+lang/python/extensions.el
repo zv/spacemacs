@@ -36,17 +36,17 @@
                nosetests-suite
                nosetests-pdb-suite)
     :init
-    (evil-leader/set-key-for-mode 'python-mode
-      "mtA" 'nosetests-pdb-all
-      "mta" 'nosetests-all
-      "mtB" 'nosetests-pdb-module
-      "mtb" 'nosetests-module
-      "mtT" 'nosetests-pdb-one
-      "mtt" 'nosetests-one
-      "mtM" 'nosetests-pdb-module
-      "mtm" 'nosetests-module
-      "mtS" 'nosetests-pdb-suite
-      "mts" 'nosetests-suite)
+    (spacemacs/set-leader-keys-for-major-mode 'python-mode
+      "tA" 'nosetests-pdb-all
+      "ta" 'nosetests-all
+      "tB" 'nosetests-pdb-module
+      "tb" 'nosetests-module
+      "tT" 'nosetests-pdb-one
+      "tt" 'nosetests-one
+      "tM" 'nosetests-pdb-module
+      "tm" 'nosetests-module
+      "tS" 'nosetests-pdb-suite
+      "ts" 'nosetests-suite)
     :config
     (progn
       (add-to-list 'nose-project-root-files "setup.cfg")
@@ -54,23 +54,23 @@
 
 (defun python/init-pylookup ()
   (use-package pylookup
-    :commands pylookup-lookup
+    :commands (pylookup-lookup pylookup-update pylookup-update-all)
     :init
     (progn
-      (evilify pylookup-mode pylookup-mode-map)
-      (evil-leader/set-key-for-mode 'python-mode
-        "mhH"  'pylookup-lookup))
+      (evilified-state-evilify pylookup-mode pylookup-mode-map)
+      (spacemacs/set-leader-keys-for-major-mode 'python-mode
+        "mhH" 'pylookup-lookup))
     :config
     (progn
-      (let ((dir (configuration-layer/get-layer-property 'python)))
-        (setq pylookup-dir (concat dir "/pylookup")
-              pylookup-program (concat pylookup-dir "/pylookup.py")
-              pylookup-db-file (concat pylookup-dir "/pylookup.db"))))))
+      (let ((dir (configuration-layer/get-layer-local-dir 'python)))
+        (setq pylookup-dir (concat dir "pylookup/")
+              pylookup-program (concat pylookup-dir "pylookup.py")
+              pylookup-db-file (concat pylookup-dir "pylookup.db"))))))
 
 (defun python/init-py-yapf ()
   (use-package py-yapf
     :init
-    (evil-leader/set-key-for-mode 'python-mode "m=" 'py-yapf-buffer)
+    (spacemacs/set-leader-keys-for-major-mode 'python-mode "=" 'py-yapf-buffer)
     :config
     (if python-enable-yapf-format-on-save
         (add-hook 'python-mode-hook 'py-yapf-enable-on-save))))
