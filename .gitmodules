@@ -1,6 +1,3 @@
 [submodule "layers/zv/extensions/z3-mode"]
 	path = layers/zv/extensions/z3-mode
 	url = git://github.com/zv/z3-mode.git
-[submodule "layers/zv/extensions/org"]
-	path = layers/zv/extensions/org
-	url = git://orgmode.org/org-mode.git
