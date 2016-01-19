@@ -180,24 +180,21 @@
   "Create leader keybindings from an alist of the form (KEYS . PATH)"
   (mapc (lambda (binding)
           (let* ((path        (cdr binding))
-                 (keybinding  (car binding))
-                 (keyseq (lookup-key evil-leader--default-map keybinding)))
+                 (keybinding  (car binding)))
             ;; We check if it is an integer because keyseq returns a number if
             ;; the preceeding keys are also unbound.
-            (if (and keyseq (not (integerp keyseq)))
-                (warn "zv//initial-path-keybinding: %s is already bound to %s" keybinding keyseq)
-              (evil-leader/set-key keybinding (if (string-match "\/$" path)
-                                                  ;; use ido-find-file-in-dir if we're binding a directory
-                                                  `(lambda () (interactive) (ido-find-file-in-dir ,path))
-                                                ;; Otherwise we're looking at a file, jump directly to it
-                                                `(lambda () (interactive) (find-file-existing ,path)))))))
-        key-file-map))
+            (evil-leader/set-key keybinding (if (string-match "\/$" path)
+                                                ;; use ido-find-file-in-dir if we're binding a directory
+                                                `(lambda () (interactive) (ido-find-file-in-dir ,path))
+                                              ;; Otherwise we're looking at a file, jump directly to it
+                                              `(lambda () (interactive) (find-file-existing ,path))))))
+  key-file-map))
 
 (zv//initial-path-keybinding `(("fez" . ,zv-configuration-layer-directory)
                                ("fel" . "~/Development/")
                                ("fzd" . "~/dotfilez/")
                                ("fzo" . ,org-directory)
-                               ("fzn" . ,(concat org-directory "/notes"))
+                               ("fzn" . ,(concat org-directory "/notes.org"))
                                ("fzb" . ,zv//blog-path)
                                ("fzp" . ,(concat zv//blog-path "org/_posts/"))))
 
@@ -241,6 +238,7 @@
   '(progn
      (define-key shell-mode-map "\C-d" nil)))
 
+
 ;; Info Mode
 (evil-add-hjkl-bindings Info-mode-map 'emacs
   "0" 'evil-digit-argument-or-evil-beginning-of-line
@@ -256,6 +254,9 @@
   "\C-t" 'Info-history-back ; "l"
   "\C-o" 'Info-history-back
   "\C-]" 'Info-follow-nearest-node
+  ;; The following are for scroll up / scroll down keys
+  (kbd "<mouse-4>") 'Info-scroll-down
+  (kbd "<mouse-5>") 'Info-scroll-up
   (kbd "DEL") 'Info-scroll-down)
 
 ;; neotree
