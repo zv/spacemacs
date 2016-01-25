@@ -1,7 +1,6 @@
 ;;; core-keybindings.el --- Spacemacs Core File
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -139,7 +138,8 @@ minor-mode, the third argument should be non nil."
               :prefix-cmd ,prefix
               ,(if minor :minor-modes :major-modes) (,mode)
               :keys ,emacs-leaders
-              :evil-keys ,leaders))
+              :evil-keys ,leaders
+              :evil-states (normal motion visual evilified)))
           (boundp prefix)))))
 
 (defun spacemacs/set-leader-keys-for-major-mode (mode key def &rest bindings)

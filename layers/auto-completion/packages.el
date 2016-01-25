@@ -1,7 +1,6 @@
 ;;; packages.el --- Auto-completion Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -202,49 +201,49 @@
     (progn
       ;; We don't want undefined variable errors
       (defvar yas-global-mode nil)
-
-      ;; disable yas minor mode map
-      ;; use hippie-expand instead
-      (setq yas-minor-mode-map (make-sparse-keymap))
-
-      ;; allow nested expansions
-      (setq yas-triggers-in-field t)
-
-      ;; this makes it easy to get out of a nested expansion
-      (define-key yas-minor-mode-map
-        (kbd "M-s-/") 'yas-next-field)
-
+      (setq yas-triggers-in-field t
+            yas-wrap-around-region t
+            helm-yas-display-key-on-candidate t)
       ;; on multiple keys, fall back to completing read
       ;; typically this means helm
       (setq yas-prompt-functions '(yas-completing-prompt))
-
-      ;; add key into candidate list
-      (setq helm-yas-display-key-on-candidate t)
-      (setq spacemacs--auto-completion-dir
-            (configuration-layer/get-layer-property 'auto-completion :dir))
+      ;; disable yas minor mode map
+      ;; use hippie-expand instead
+      (setq yas-minor-mode-map (make-sparse-keymap))
+      ;; this makes it easy to get out of a nested expansion
+      (define-key yas-minor-mode-map (kbd "M-s-/") 'yas-next-field)
+      ;; configure snippet directories
+      (let* ((spacemacs--auto-completion-dir
+              (configuration-layer/get-layer-property 'auto-completion :dir))
+             (private-yas-dir (if auto-completion-private-snippets-directory
+                                  auto-completion-private-snippets-directory
+                                (concat
+                                 configuration-layer-private-directory
+                                 "snippets/")))
+             (spacemacs-layer-snippets-dir (expand-file-name
+                                      "snippets"
+                                      spacemacs--auto-completion-dir))
+             (dotspacemacs-directory-snippets-dir (when dotspacemacs-directory
+                                                    (expand-file-name
+                                                     "snippets"
+                                                     dotspacemacs-directory))))
+        (setq yas-snippet-dirs nil)
+        ;; ~/.emacs.d/layers/auto-completion/snippets
+        (push spacemacs-layer-snippets-dir yas-snippet-dirs)
+        ;; ~/.emacs.d/elpa/yasnippet-xxxxx/snippets
+        (push 'yas-installed-snippets-dir yas-snippet-dirs)
+        ;; ~/.spacemacs.d/snippets
+        (when dotspacemacs-directory-snippets-dir
+          (push dotspacemacs-directory-snippets-dir yas-snippet-dirs))
+        ;; arbitrary directories in `auto-completion-private-snippets-directory'
+        (when private-yas-dir
+          (if (listp private-yas-dir)
+              (setq yas-snippet-dirs (append yas-snippet-dirs private-yas-dir))
+            (push private-yas-dir yas-snippet-dirs))))
 
       (defun spacemacs/load-yasnippet ()
-        (unless yas-global-mode
-          (progn
-            (yas-global-mode 1)
-            (let ((private-yas-dir (if auto-completion-private-snippets-directory
-                                       auto-completion-private-snippets-directory
-                                     (concat
-                                      configuration-layer-private-directory
-                                      "snippets/")))
-                  (spacemacs-snippets-dir (expand-file-name
-                                           "snippets"
-                                           spacemacs--auto-completion-dir)))
-              (setq yas-snippet-dirs
-                    (append (list private-yas-dir)
-                            (when (boundp 'yas-snippet-dirs)
-                              yas-snippet-dirs)
-                            (list spacemacs-snippets-dir)))
-              (yas-load-directory spacemacs-snippets-dir t)
-              (yas-load-directory private-yas-dir t)
-              (setq yas-wrap-around-region t))))
+        (unless yas-global-mode (yas-global-mode 1))
         (yas-minor-mode 1))
-
       (spacemacs/add-to-hooks 'spacemacs/load-yasnippet '(prog-mode-hook
                                                           markdown-mode-hook
                                                           org-mode-hook))
@@ -258,10 +257,10 @@
       (defun spacemacs/force-yasnippet-off ()
         (yas-minor-mode -1)
         (setq yas-dont-activate t))
-
-      (spacemacs/add-to-hooks 'spacemacs/force-yasnippet-off '(term-mode-hook
-                                                               shell-mode-hook
-                                                               eshell-mode-hook)))
+      (spacemacs/add-to-hooks
+       'spacemacs/force-yasnippet-off '(term-mode-hook
+                                        shell-mode-hook
+                                        eshell-mode-hook)))
     :config (spacemacs|diminish yas-minor-mode " ⓨ" " y")))
 
 (defun auto-completion/init-auto-yasnippet ()
@@ -276,7 +275,7 @@
         "Call `yas-expand' and switch to `insert state'"
         (interactive)
         (call-interactively 'aya-expand)
-        (evil-insert-state))
+        (unless holy-mode (evil-insert-state)))
       (spacemacs/declare-prefix "iS" "auto-yasnippet")
       (spacemacs/set-leader-keys
         "iSc" 'aya-create

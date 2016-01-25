@@ -1,7 +1,6 @@
 ;;; packages.el --- Spacemacs Layer packages File
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -20,6 +19,7 @@
         aggressive-indent
         auto-highlight-symbol
         avy
+        bracketed-paste
         buffer-move
         (centered-cursor :location local)
         clean-aindent-mode
@@ -415,6 +415,13 @@
       (spacemacs/set-leader-keys "`" 'avy-pop-mark))
       ))
 
+(defun spacemacs/init-bracketed-paste ()
+  (use-package bracketed-paste
+    :defer t
+    :init
+    ;; Enable bracketed-paste for tty
+    (add-hook 'tty-setup-hook 'bracketed-paste-enable)))
+
 (defun spacemacs/init-buffer-move ()
   (use-package buffer-move
     :defer t
@@ -475,10 +482,6 @@
     :init
     (spacemacs/set-leader-keys
       "xwd" 'define-word-at-point)))
-
-(defun spacemacs/init-dired+ ()
-  (use-package dired+
-    :defer t))
 
 (defun spacemacs/init-doc-view ()
   (use-package doc-view
@@ -582,17 +585,7 @@
     :init
     (progn
       (setq evil-jumper-auto-save-interval 600)
-      ;; Move keybindings into global motion state map
-      (add-hook 'evil-jumper-mode-hook
-                (lambda ()
-                  (if evil-jumper-mode
-                      (progn
-                        (define-key evil-motion-state-map (kbd "TAB") 'evil-jumper/forward)
-                        (define-key evil-motion-state-map (kbd "C-o") 'evil-jumper/backward))
-                    (define-key evil-motion-state-map (kbd "TAB") 'evil-jump-forward)
-                    (define-key evil-motion-state-map (kbd "C-o") 'evil-jump-backward))))
-      (evil-jumper-mode t)
-      (setcdr evil-jumper-mode-map nil))))
+      (evil-jumper-mode t))))
 
 (defun spacemacs/init-evil-lisp-state ()
   (use-package evil-lisp-state
@@ -1750,11 +1743,10 @@ Open junk file using helm, with `prefix-arg' search in junk files"
                      (if (display-graphic-p) 'wave 'utf-8)))
       (defun spacemacs//set-powerline-for-startup-buffers ()
         "Set the powerline for buffers created when Emacs starts."
-        (unless configuration-layer-error-count
-          (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
-            (when (and (get-buffer buffer)
-                       (configuration-layer/package-usedp 'spaceline))
-              (spacemacs//restore-powerline buffer)))))
+        (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
+          (when (and (get-buffer buffer)
+                     (configuration-layer/package-usedp 'spaceline))
+            (spacemacs//restore-powerline buffer))))
       (add-hook 'emacs-startup-hook
                 'spacemacs//set-powerline-for-startup-buffers))
     :config

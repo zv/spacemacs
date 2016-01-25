@@ -1,7 +1,6 @@
 ;;; funcs.el --- Python Layer functions File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -53,7 +52,8 @@
       (let* ((file-path (expand-file-name ".python-version" root-path))
              (version (with-temp-buffer
                         (insert-file-contents-literally file-path)
-                        (current-word))))
+                        (buffer-substring-no-properties (line-beginning-position)
+                                                        (line-end-position)))))
         (if (member version (pyenv-mode-versions))
             (pyenv-mode-set version)
           (message "pyenv: version `%s' is not installed (set by %s)"

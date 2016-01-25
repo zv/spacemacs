@@ -1,7 +1,6 @@
 ;;; packages.el --- erc Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -182,7 +181,10 @@
   (spacemacs|define-custom-layout "@ERC"
     :binding "E"
     :body
-    (call-interactively 'erc))
+    (progn
+      (add-hook 'erc-mode #'(lambda ()
+                              (persp-add-buffer (current-buffer))))
+      (call-interactively 'erc)))
   ;; do not save erc buffers
   (spacemacs|use-package-add-hook persp-mode
     :post-config

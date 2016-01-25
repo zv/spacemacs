@@ -1,6 +1,6 @@
 ;;; evil-evilified-state.el --- A minimalistic evil state
-
-;; Copyright (C) 2014, 2015 syl20bnr
+;;
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil spacemacs
@@ -34,6 +34,7 @@
 ;;; Code:
 
 (require 'evil)
+(require 'bind-map)
 
 (defvar evilified-state--modes nil
   "List of all evilified modes.")
@@ -54,6 +55,13 @@
   :enable (emacs)
   :message "-- EVILIFIED BUFFER --"
   :cursor box)
+
+(bind-map spacemacs-default-map
+  :prefix-cmd spacemacs-cmds
+  :evil-keys (dotspacemacs-leader-key)
+  :evil-states (evilified)
+  :override-minor-modes t
+  :override-mode-name spacemacs-leader-override-mode)
 
 (evil-define-command evil-force-evilified-state ()
   "Switch to evilified state without recording current command."
@@ -144,6 +152,8 @@ Needed to bypass keymaps set as text properties."
 (define-key evil-evilified-state-map "G" 'evil-goto-line)
 (define-key evil-evilified-state-map (kbd "C-f") 'evil-scroll-page-down)
 (define-key evil-evilified-state-map (kbd "C-b") 'evil-scroll-page-up)
+(define-key evil-evilified-state-map (kbd "C-e") 'evil-scroll-line-down)
+(define-key evil-evilified-state-map (kbd "C-y") 'evil-scroll-line-up)
 (define-key evil-evilified-state-map (kbd "C-d") 'evil-scroll-down)
 (define-key evil-evilified-state-map (kbd "C-u") 'evil-scroll-up)
 (define-key evil-evilified-state-map (kbd "C-z") 'evil-emacs-state)

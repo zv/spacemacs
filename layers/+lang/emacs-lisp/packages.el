@@ -1,7 +1,6 @@
 ;;; packages.el --- Emacs Lisp Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -117,12 +116,9 @@
         ("q" macrostep-collapse-all :exit t)))))
 
 (defun emacs-lisp/post-init-evil ()
-  (spacemacs/add-to-hook 'emacs-lisp-mode
-                         '(lambda ()
-                            (spacemacs|define-text-object ";"
-                                                          "elisp-comment"
-                                                          ";; "
-                                                          ""))))
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (spacemacs|define-text-object ";" "elisp-comment" ";; " ""))))
 
 (defun emacs-lisp/post-init-flycheck ()
   ;; Don't activate flycheck by default in elisp

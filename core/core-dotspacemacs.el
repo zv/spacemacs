@@ -1,7 +1,6 @@
 ;;; core-dotspacemacs.el --- Spacemacs Core File
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -82,6 +81,9 @@ the official spacemacs logo. An integer value is the index of text
 banner, `random' chooses a random text banner in `core/banners'
 directory. A string value must be a path to a .PNG file.
 If the value is nil then no banner is displayed.")
+
+(defvar dotspacemacs-scratch-mode 'text-mode
+  "Default major mode of the scratch buffer.")
 
 (defvar dotspacemacs-check-for-update t
   "If non nil then spacemacs will check for updates at startup
@@ -280,7 +282,7 @@ are caught and signalled to user in spacemacs buffer."
        (condition-case-unless-debug err
            (,func)
          (error
-          (configuration-layer//set-error)
+          (configuration-layer//increment-error-count)
           (spacemacs-buffer/append (format "Error in %s: %s\n"
                                            ',(symbol-name func)
                                            (error-message-string err))

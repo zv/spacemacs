@@ -1,7 +1,6 @@
 ;;; packages.el --- Org Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -252,9 +251,7 @@ Will work on both org-mode and any mode that accepts plain html."
         "aol" 'org-store-link))
     :config
     (progn
-      ;; setup org directory
-      (unless (file-exists-p org-directory)
-        (make-directory org-directory))
+      (setq org-default-notes-file "notes.org")
       (font-lock-add-keywords
        'org-mode '(("\\(@@html:<kbd>@@\\) \\(.*\\) \\(@@html:</kbd>@@\\)"
                     (1 font-lock-comment-face prepend)
@@ -264,6 +261,7 @@ Will work on both org-mode and any mode that accepts plain html."
       (require 'org-indent)
       (define-key global-map "\C-cl" 'org-store-link)
       (define-key global-map "\C-ca" 'org-agenda)
+      (define-key global-map "\C-cc" 'org-capture)
 
       ;; Open links and files with RET in normal state
       (evil-define-key 'normal org-mode-map (kbd "RET") 'org-open-at-point)

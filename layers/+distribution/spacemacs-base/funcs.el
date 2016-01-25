@@ -1,7 +1,6 @@
 ;;; funcs.el --- Spacemacs Base Layer functions File
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -864,7 +863,10 @@ is nonempty."
 (defun spacemacs/switch-to-scratch-buffer ()
   "Switch to the `*scratch*' buffer. Create it first if needed."
   (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*")))
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (when (and (not (eq major-mode dotspacemacs-scratch-mode))
+             (fboundp dotspacemacs-scratch-mode))
+    (funcall dotspacemacs-scratch-mode)))
 
 ;; http://stackoverflow.com/questions/11847547/emacs-regexp-count-occurrences
 (defun how-many-str (regexp str)

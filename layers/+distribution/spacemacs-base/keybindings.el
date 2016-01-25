@@ -1,7 +1,6 @@
 ;;; keybindings.el --- Spacemacs Base Layer key-bindings File
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -94,7 +93,6 @@ Ensure that helm is required before calling FUNC."
 (spacemacs||set-helm-key "hdk" describe-key)
 (spacemacs||set-helm-key "hdm" describe-mode)
 (spacemacs||set-helm-key "hdp" describe-package)
-(spacemacs/set-leader-keys "hds" 'spacemacs/describe-system-info)
 (spacemacs||set-helm-key "hdt" describe-theme)
 (spacemacs||set-helm-key "hdv" describe-variable)
 (spacemacs||set-helm-key "hn"  view-emacs-news)
@@ -130,6 +128,17 @@ Ensure that helm is required before calling FUNC."
   "fvf" 'add-file-local-variable
   "fvp" 'add-file-local-variable-prop-line
   "fy" 'spacemacs/show-and-copy-buffer-filename)
+;; help -----------------------------------------------------------------------
+(spacemacs/set-leader-keys
+  "hdb" 'describe-bindings
+  "hdc" 'describe-char
+  "hdf" 'describe-function
+  "hdk" 'describe-key
+  "hdl" 'spacemacs/describe-last-keys
+  "hdp" 'describe-package
+  "hds" 'spacemacs/describe-system-info
+  "hdt" 'describe-theme
+  "hdv" 'describe-variable)
 ;; insert stuff ---------------------------------------------------------------
 (spacemacs/set-leader-keys
   "iJ" 'spacemacs/insert-line-below-no-indent
@@ -555,12 +564,13 @@ otherwise it is scaled down."
   "Toggle between transparent or opaque display."
   (interactive)
   (let* ((frame (selected-frame))
-         (alpha (frame-parameter frame 'alpha)))
+         (alpha (frame-parameter frame 'alpha))
+         (dotfile-setting (cons dotspacemacs-active-transparency
+                                dotspacemacs-inactive-transparency)))
     (set-frame-parameter
      frame 'alpha
-     (if (or (null alpha) (= (cdr-safe alpha) 100))
-         (cons dotspacemacs-active-transparency
-               dotspacemacs-inactive-transparency)
+     (if (not (equal alpha dotfile-setting))
+         dotfile-setting
        '(100 . 100))))
   ;; Immediately enter the micro-state, but also keep toggle
   ;; accessible from helm-spacemacs

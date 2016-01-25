@@ -1,7 +1,6 @@
 ;;; packages.el --- ocaml Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -18,12 +17,10 @@
    ;; flycheck-ocaml
     merlin
     ocp-indent
+    smartparens
     tuareg
     utop
     ))
-
-;;(defun ocaml/post-init-auto-complete ()
-;;  (spacemacs|enable-auto-complete merlin-mode))
 
 (defun ocaml/post-init-company ()
   (spacemacs|add-company-hook merlin-mode))
@@ -39,8 +36,7 @@
       (progn
         (with-eval-after-load 'merlin
           (setq merlin-error-after-save nil)
-          (flycheck-ocaml-setup))
-        ))))
+          (flycheck-ocaml-setup))))))
 
 (defun ocaml/init-merlin ()
   (use-package merlin
@@ -74,14 +70,19 @@
         "hh" 'merlin-document
         "ht" 'merlin-type-enclosing
         "hT" 'merlin-type-expr
-        "rd" 'merlin-destruct
-        ))))
+        "rd" 'merlin-destruct))))
 
 (defun ocaml/init-ocp-indent ()
   (use-package ocp-indent
     :defer t
     :init
     (add-hook 'tuareg-mode-hook 'ocp-indent-caml-mode-setup)))
+
+(defun ocaml/post-init-smartparens ()
+  (with-eval-after-load 'smartparens
+    ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
+    (sp-local-pair 'tuareg-mode "'" nil :actions nil)
+    (sp-local-pair 'tuareg-mode "`" nil :actions nil)))
 
 (defun ocaml/init-tuareg ()
   (use-package tuareg
@@ -94,12 +95,7 @@
         "cc" 'compile)
       ;; Make OCaml-generated files invisible to filename completion
       (dolist (ext '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi" ".cmxs" ".cmt" ".annot"))
-        (add-to-list 'completion-ignored-extensions ext)))
-    :config
-    (when (fboundp 'sp-local-pair)
-      ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
-      (sp-local-pair 'tuareg-mode "'" nil :actions nil)
-      (sp-local-pair 'tuareg-mode "`" nil :actions nil))))
+        (add-to-list 'completion-ignored-extensions ext)))))
 
 (defun ocaml/init-utop ()
   (use-package utop

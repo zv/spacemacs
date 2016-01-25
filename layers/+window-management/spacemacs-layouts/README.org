@@ -23,16 +23,16 @@ Layouts are window configurations that have buffer isolation between each other.
 
 * Install
 ** Layer
-To use this contribution add it to your =~/.spacemacs=
+This layer is automatically included if you use the =spacemacs= distribution.
 
-#+BEGIN_SRC emacs-lisp
-  (setq-default dotspacemacs-configuration-layers '(spacemacs-layouts))
-#+END_SRC
+If you use =spacemacs-base= distribution then to use this configuration layer,
+add it to your =~/.spacemacs=. You will need to add =spacemacs-layout= to the
+existing =dotspacemacs-configuration-layers= list in this file.
 
 * Features 
 
 ** Micro-states
-*** TODO Layouts Micro State
+*** Layouts Micro State
 The layouts micro-state is initiated with ~SPC l~.
 
 | Key Binding | Description                                                |
@@ -47,7 +47,7 @@ The layouts micro-state is initiated with ~SPC l~.
 | ~C~         | close the other layouts and keep their buffers             |
 | ~h~         | go to default layout                                       |
 | ~C-h~       | previous layout in list                                    |
-| ~l~         | select a layout with helm                                  |
+| ~l~         | select/create a layout with helm                           |
 | ~L~         | load layouts from file                                     |
 | ~C-l~       | next layout in list                                        |
 | ~n~         | next layout in list                                        |
@@ -55,9 +55,10 @@ The layouts micro-state is initiated with ~SPC l~.
 | ~o~         | open a custom layout                                       |
 | ~p~         | previous layout in list                                    |
 | ~r~         | remove current buffer from layout                          |
-| ~R~         | rename layout                                              |
+| ~R~         | rename current layout                                      |
 | ~s~         | save layouts                                               |
 | ~t~         | display a buffer without adding it to the current layout   |
+| ~w~         | workspaces micro-state (needs eyebrowse layer enabled)     |
 | ~x~         | kill current layout with its buffers                       |
 | ~X~         | kill other layouts with their buffers                      |
 

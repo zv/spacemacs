@@ -1,7 +1,6 @@
 ;;; packages.el --- Ruby Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -99,6 +98,7 @@
     (progn
       (defun spacemacs//enable-rbenv ()
         "Enable rbenv, use .ruby-version if exists."
+        (require 'rbenv)
         (let ((version-file-path (rbenv--locate-file ".ruby-version")))
           (global-rbenv-mode)
           ;; try to use the ruby defined in .ruby-version

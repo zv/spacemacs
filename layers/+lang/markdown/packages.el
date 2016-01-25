@@ -1,7 +1,6 @@
 ;;; packages.el --- Markdown Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -183,6 +182,16 @@ Will work on both org-mode and any mode that accepts plain html."
                           :face mmm-declaration-submode-face
                           :front "^```elisp[\n\r]+"
                           :back "^```$")))
+      (mmm-add-classes '((markdown-javascript
+                          :submode javascript-mode
+                          :face mmm-declaration-submode-face
+                          :front "^```javascript[\n\r]+"
+                          :back "^```$")))
+      (mmm-add-classes '((markdown-ess
+                          :submode R-mode
+                          :face mmm-declaration-submode-face
+                          :front "^```{?r.*}?[\n\r]+"
+                          :back "^```$")))
       (setq mmm-global-mode t)
       (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-python)
       (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-java)
@@ -190,7 +199,9 @@ Will work on both org-mode and any mode that accepts plain html."
       (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-c)
       (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-c++)
       (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-elisp)
-      (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-html))))
+      (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-html)
+      (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-javascript)
+      (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-ess))))
 
 (when (configuration-layer/layer-usedp 'auto-completion)
   (defun markdown/post-init-company ()

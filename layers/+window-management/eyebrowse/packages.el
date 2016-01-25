@@ -1,7 +1,6 @@
 ;;; packages.el --- Eyebrowse Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2016 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -39,8 +38,7 @@
             caption)))
 
       (defun spacemacs//workspaces-ms-get-window-configs ()
-        "Return the list of window configs. Depends on value of
-`eyebrowse-place-zero-at-the-end'."
+        "Return the list of window configs."
         (--sort (if (eq (car other) 0)
                     t
                   (< (car it) (car other)))

@@ -43,6 +43,7 @@
     - [Automatic update](#automatic-update)
     - [On develop branch](#on-develop-branch)
     - [Revert to a specific version](#revert-to-a-specific-version)
+- [Quotes](#quotes)
 - [Contributions](#contributions)
 - [License](#license)
 - [Supporting Spacemacs](#supporting-spacemacs)
@@ -136,11 +137,8 @@ the start of this file. That will populate your `~/.emacs.d` directory, which
 is what transforms a regular Emacs into Spacemacs.
 
 *After* you have completed the [install process below](#install), it is also
- recommended to add the [osx layer][] to your [dotfile][]:
-
-```elisp
-(setq-default dotspacemacs-configuration-layers '(osx))
-```
+ recommended to add the [osx layer][] to your [dotfile][]. Install instructions
+ are available in the [osx layer][] documentation.
 
 Note that the `emacs-mac-port` server behaves differently than the regular Emacs
 server which in particular **DOES NOT** allow multi-tty if you start GUI i.e.
@@ -200,11 +198,14 @@ For efficient searches we recommend to install `pt` ([the platinum searcher][]).
 
 3. Launch Emacs. Spacemacs will automatically install the packages it requires.
    If you get an error regarding package downloads then you may try to disable
-   HTTPS protocol by starting Emacs with
+   the HTTPS protocol by starting Emacs with
 
    ```sh
    emacs --insecure
    ```
+
+   You may wish to clear out your `.emacs.d/elpa` directory before doing this,
+   so that any corrupted packages you may have downloaded will be reinstalled.
 
 4. Restart Emacs to complete the installation.
 
@@ -273,6 +274,12 @@ branch, for instance to revert to the last `0.103`:
   your packages by clicking the `[Update Packages]` button on the Spacemacs Home
   Buffer.**
 
+# Quotes
+
+[Quote][quote01] by [ashnur](https://github.com/ashnur):
+
+    «I feel that spacemacs is an aircraft carrier and I am playing table tennis on the deck as a freerider.»
+
 # Contributions
 
 Spacemacs is a community-driven project, it needs _you_ to keep it up to
@@ -304,7 +311,7 @@ license.
 The best way to support Spacemacs is to contribute to it either by reporting
 bugs, helping the community on the [Gitter Chat][] or sending pull requests.
 
-If you want to show your support financially you can buy a drink to the
+If you want to show your support financially you can contribute to [Bountysource][] or buy a drink for the
 maintainer by clicking on the [Paypal badge](#top).
 
 If you used spacemacs in a project and you want to show that fact, you can use
@@ -355,3 +362,5 @@ Thank you!
 [icon-repository]: https://github.com/nashamri/spacemacs-logo
 [Stack Exchange]: http://emacs.stackexchange.com/questions/tagged/spacemacs
 [Reddit]: https://www.reddit.com/r/spacemacs
+[quote01]: https://gitter.im/syl20bnr/spacemacs?at=568e627a0cdaaa62045a7df6
+[Bountysource]: https://salt.bountysource.com/teams/spacemacs
