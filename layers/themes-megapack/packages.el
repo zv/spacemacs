@@ -34,6 +34,7 @@
     darkmine-theme
     darktooth-theme
     django-theme
+    dracula-theme
     espresso-theme
     farmhouse-theme
     firebelly-theme
@@ -53,6 +54,7 @@
     jbeans-theme
     light-soap-theme
     lush-theme
+    majapahit-theme
     material-theme
     minimal-theme
     moe-theme
@@ -65,6 +67,7 @@
     noctilux-theme
     obsidian-theme
     occidental-theme
+    omtose-phellack-theme
     oldlace-theme
     organic-green-theme
     pastels-on-dark-theme

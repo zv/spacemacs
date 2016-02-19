@@ -69,7 +69,9 @@ the user activate the completion manually."
             ;; my prompt is easy enough to see
             eshell-highlight-prompt nil
             ;; treat 'echo' like shell echo
-            eshell-plain-echo-behavior t)
+            eshell-plain-echo-behavior t
+            ;; cache directory
+            eshell-directory-name (concat spacemacs-cache-directory "eshell/"))
 
       (defun spacemacs//eshell-auto-end ()
         "Move point to end of current prompt when switching to insert state."
@@ -266,7 +268,7 @@ is achieved by adding the relevant text properties."
     :init
     (progn
       (setq shell-pop-window-position shell-default-position
-            shell-pop-window-height   shell-default-height
+            shell-pop-window-size     shell-default-height
             shell-pop-term-shell      shell-default-term-shell
             shell-pop-full-span t)
       (defmacro make-shell-pop-command (type &optional shell)

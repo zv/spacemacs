@@ -171,10 +171,10 @@ the current state and point position."
   "Maximize buffer"
   (interactive)
   (if (and (= 1 (length (window-list)))
-           (assoc'_ register-alist))
-      (jump-to-register '_)
+           (assoc ?_ register-alist))
+      (jump-to-register ?_)
     (progn
-      (window-configuration-to-register '_)
+      (window-configuration-to-register ?_)
       (delete-other-windows))))
 
 ;; A small minor mode to use a big fringe
@@ -292,6 +292,9 @@ argument takes the kindows rotate backwards."
                (rename-buffer new-name)
                (set-visited-file-name new-name)
                (set-buffer-modified-p nil)
+               (when (fboundp 'recentf-add-file)
+                   (recentf-add-file new-name)
+                   (recentf-remove-if-non-kept filename))
                (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
 
 ;; from magnars
@@ -406,6 +409,13 @@ argument takes the kindows rotate backwards."
 
 (defalias 'spacemacs/home 'spacemacs-buffer/goto-buffer
   "Go to home Spacemacs buffer")
+
+(defun spacemacs/home-delete-other-windows ()
+  "Open home Spacemacs buffer and delete other windows.
+Useful for making the home buffer the only visible buffer in the frame."
+  (interactive)
+  (spacemacs/home)
+  (delete-other-windows))
 
 (defun spacemacs/insert-line-above-no-indent (count)
   (interactive "p")
@@ -863,10 +873,12 @@ is nonempty."
 (defun spacemacs/switch-to-scratch-buffer ()
   "Switch to the `*scratch*' buffer. Create it first if needed."
   (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (when (and (not (eq major-mode dotspacemacs-scratch-mode))
-             (fboundp dotspacemacs-scratch-mode))
-    (funcall dotspacemacs-scratch-mode)))
+  (let ((exists (get-buffer "*scratch*")))
+    (switch-to-buffer (get-buffer-create "*scratch*"))
+    (when (and (not exists)
+               (not (eq major-mode dotspacemacs-scratch-mode))
+               (fboundp dotspacemacs-scratch-mode))
+      (funcall dotspacemacs-scratch-mode))))
 
 ;; http://stackoverflow.com/questions/11847547/emacs-regexp-count-occurrences
 (defun how-many-str (regexp str)

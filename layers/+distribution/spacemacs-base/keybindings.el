@@ -103,8 +103,8 @@ Ensure that helm is required before calling FUNC."
 ;; errors ---------------------------------------------------------------------
 (spacemacs/set-leader-keys
   "en" 'spacemacs/next-error
-  "ep" 'spacemacs/previous-error
-  "eN" 'spacemacs/previous-error)
+  "eN" 'spacemacs/previous-error
+  "ep" 'spacemacs/previous-error)
 ;; file -----------------------------------------------------------------------
 (spacemacs/set-leader-keys
   "fc" 'spacemacs/copy-file
@@ -138,7 +138,9 @@ Ensure that helm is required before calling FUNC."
   "hdp" 'describe-package
   "hds" 'spacemacs/describe-system-info
   "hdt" 'describe-theme
-  "hdv" 'describe-variable)
+  "hdv" 'describe-variable
+  "hI"  'spacemacs/report-issue
+  "hn"  'view-emacs-news)
 ;; insert stuff ---------------------------------------------------------------
 (spacemacs/set-leader-keys
   "iJ" 'spacemacs/insert-line-below-no-indent
@@ -234,14 +236,16 @@ Ensure that helm is required before calling FUNC."
   :documentation "Display the fringe in GUI mode."
   :evil-leader "Tf")
 (spacemacs|add-toggle fullscreen-frame
-  :status nil
+  :status (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
   :on (spacemacs/toggle-frame-fullscreen)
+  :off (spacemacs/toggle-frame-fullscreen)
   :documentation "Display the current frame in full screen."
   :evil-leader "TF")
 (spacemacs|add-toggle maximize-frame
   :if (version< "24.3.50" emacs-version)
-  :status nil
+  :status (eq (frame-parameter nil 'fullscreen) 'maximized)
   :on (toggle-frame-maximized)
+  :off (toggle-frame-maximized)
   :documentation "Maximize the current frame."
   :evil-leader "TM")
 (spacemacs|add-toggle mode-line

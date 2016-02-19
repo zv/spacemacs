@@ -67,7 +67,7 @@
   (add-to-list 'auto-mode-alist '("\\.react.js\\'" . react-mode))
   (add-to-list 'auto-mode-alist '("\\index.android.js\\'" . react-mode))
   (add-to-list 'auto-mode-alist '("\\index.ios.js\\'" . react-mode))
-  (add-to-list 'magic-mode-alist '("/** @jsx React.DOM */" . react-mode))
+  (add-to-list 'magic-mode-alist '("/\\*\\* @jsx React\\.DOM \\*/" . react-mode))
   (defun spacemacs//setup-react-mode ()
     "Adjust web-mode to accommodate react-mode"
     (emmet-mode 0)
@@ -77,6 +77,8 @@
     (yas-activate-extra-mode 'js-mode)
     ;; Force jsx content type
     (web-mode-set-content-type "jsx")
+    ;; Don't auto-quote attribute values
+    (setq-local web-mode-enable-auto-quoting nil)
     ;; Why do we do this ?
     (defadvice web-mode-highlight-part (around tweak-jsx activate)
       (let ((web-mode-enable-part-face nil))

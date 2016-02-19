@@ -63,7 +63,11 @@
         "gu" 'anaconda-mode-usages))))
 
 (defun python/post-init-eldoc ()
-  (add-hook 'python-mode-hook 'eldoc-mode))
+  (defun spacemacs//init-eldoc-python-mode ()
+    (eldoc-mode)
+    (when (configuration-layer/package-usedp 'anaconda-mode)
+      (anaconda-eldoc-mode)))
+  (add-hook 'python-mode-hook 'spacemacs//init-eldoc-python-mode))
 
 (defun python/post-init-evil-jumper ()
   (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
@@ -80,6 +84,7 @@
 
 (defun python/init-pyenv-mode ()
   (use-package pyenv-mode
+    :if (executable-find "pyenv")
     :commands (pyenv-mode-versions)
     :init
     (progn
@@ -310,6 +315,14 @@
       :defer t
       :init
       (push 'company-anaconda company-backends-python-mode))))
+
+(defun python/init-py-yapf ()
+  (use-package py-yapf
+    :init
+    (spacemacs/set-leader-keys-for-major-mode 'python-mode "=" 'py-yapf-buffer)
+    :config
+    (when python-enable-yapf-format-on-save
+      (add-hook 'python-mode-hook 'py-yapf-enable-on-save))))
 
 (defun python/post-init-semantic ()
   (semantic/enable-semantic-mode 'python-mode)

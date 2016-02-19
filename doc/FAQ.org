@@ -15,7 +15,7 @@
    - [[Should I place my settings in =user-init= or =user-config=?][Should I place my settings in =user-init= or =user-config=?]]
    - [[Why do some of my =org=-related settings cause problems?][Why do some of my =org=-related settings cause problems?]]
    - [[Why is Spacemacs hanging on startup?][Why is Spacemacs hanging on startup?]]
-   - [[Why does =helm-M-x= (~SPC :~) not accept the prefix argument?][Why does =helm-M-x= (~SPC :~) not accept the prefix argument?]]
+   - [[Why does =helm-M-x= (~SPC SPC~) not accept the prefix argument?][Why does =helm-M-x= (~SPC SPC~) not accept the prefix argument?]]
    - [[Why does my color theme not render correctly in terminal mode?][Why does my color theme not render correctly in terminal mode?]]
    - [[Why do I get =(wrong-type-argument arrayp nil)= errors on startup?][Why do I get =(wrong-type-argument arrayp nil)= errors on startup?]]
    - [[Typing quickly =fd= takes me out of =insert state=. What is going on?][Typing quickly =fd= takes me out of =insert state=. What is going on?]]
@@ -34,6 +34,9 @@
    - [[Prevent the visual selection overriding my system clipboard?][Prevent the visual selection overriding my system clipboard?]]
    - [[Make spell-checking support curly quotes (or any other character)?][Make spell-checking support curly quotes (or any other character)?]]
    - [[Use Spacemacs as the =$EDITOR= for git commits?][Use Spacemacs as the =$EDITOR= for git commits?]]
+   - [[Try Spacemacs without modifying my existing Emacs configuration?][Try Spacemacs without modifying my existing Emacs configuration?]]
+   - [[Make copy/paste working with the mouse in X11 terminals?][Make copy/paste working with the mouse in X11 terminals?]]
+   - [[Use =helm-ag= to search only in files of a certain type?][Use =helm-ag= to search only in files of a certain type?]]
  - [[Windows][Windows]]
    - [[Why do the fonts look crappy on Windows?][Why do the fonts look crappy on Windows?]]
    - [[Why is there no Spacemacs logo in the startup buffer?][Why is there no Spacemacs logo in the startup buffer?]]
@@ -51,16 +54,15 @@ may also just type ~SPC f e v~.
 As it is written, that is _space_ then _macs_.
 
 ** Why are packages installed with =package-install= automatically deleted by Spacemacs when it boots?
-To declare new packages you have to create a new configuration layer or
-add the package name to the variable =dotspacemacs-additonal-packages=
-of your dotfile, see the [[file:QUICK_START.org][quick start guide]] for more info.
+To declare new packages you have to create a new configuration layer or add the
+package name to the variable =dotspacemacs-additonal-packages= of your dotfile,
+see the [[file:QUICK_START.org][quick start guide]] for more info.
 
 ** How to fix package download errors when installing Spacemacs ?
 Since 0.105.0 HTTPS protocol is used by default to download packages. If your
 environment does not allow HTTPS to reach ELPA repositories then you can start
 Emacs with the =--insecure= argument for force the usage of HTTP non secured
-protocol.
-Then you can set the variable =dotspacemacs-elpa-https= to =nil= in your
+protocol. You can set the variable =dotspacemacs-elpa-https= to =nil= in your
 dotfile to remove the need to start Emacs with =--insecure== argument.
 
 ** The Spacemacs banner is ugly, what should I do?
@@ -79,18 +81,19 @@ section in the font section of the [[file:DOCUMENTATION.org][documentation]].
 
 ** Why is after-init-hook not executed?
 Don't launch Spacemacs with =emacs -q -l init.el= command. This command will run
-the hooked functions in =after-init-hook= before the evaluation of the passed =-l
-init.el= file.
+the hooked functions in =after-init-hook= before the evaluation of the passed
+=-l init.el= file.
 
 ** What is the difference between =spacemacs-base= and =spacemacs= distributions?
-The =distribution= concept was introduced in 0.104.x. You can now choose
-between two distributions =spacemacs= or =spacemacs-base=.
-=spacemacs-base= contains only a minimal set of packages; whereas =spacemacs=
-is the full Spacemacs experience.
+The =distribution= concept was introduced in 0.104.x. You can now choose between
+two distributions =spacemacs= or =spacemacs-base=. =spacemacs-base= contains
+only a minimal set of packages; whereas =spacemacs= is the full Spacemacs
+experience.
+
 Set the distribution with =dotspacemacs-distribution= variable. The default is
-=spacemacs=. For more information as to what is included,
-check out the =packages.el= file in the respective folders in the
-=+distribution= folder of the =layers/= directory.
+=spacemacs=. For more information as to what is included, check out the
+=packages.el= file in the respective folders in the =+distribution= folder of
+the =layers/= directory.
 
 ** Should I place my settings in =user-init= or =user-config=?
 Any variable that layer configuration code will *read* and *act on* must be set
@@ -106,15 +109,15 @@ should not be loaded before =dotspacemacs/user-config=, otherwise both versions
 will be loaded and will conflict.
 
 Because of autoloading, calling to =org= functions will trigger the loading up
-of the =org= shipped with emacs wich will induce conflicts.
-One way to avoid conflict is to wrap your =org= config code in a
-=with-eval-after-load= block like this:
+of the =org= shipped with emacs wich will induce conflicts. One way to avoid
+conflict is to wrap your =org= config code in a =with-eval-after-load= block
+like this:
 
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org
-    ;; here goes your Org config :)
-    ;; ....
-    )    
+(with-eval-after-load 'org
+  ;; here goes your Org config :)
+  ;; ....
+  )
 #+END_SRC
 
 ** Why is Spacemacs hanging on startup?
@@ -126,30 +129,30 @@ Try using these settings in the ~user-init~ function in your ~.spacemacs~
 configuration:
 
 #+BEGIN_SRC emacs-lisp
-  (setq tramp-ssh-controlmaster-options
-        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+(setq tramp-ssh-controlmaster-options
+      "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 #+END_SRC
 
 See [[https://github.com/syl20bnr/spacemacs/issues/3422#issuecomment-148919047][issue #3422]] and [[https://github.com/emacs-helm/helm/issues/1000#issuecomment-119487649][helm issue #1000]] for details. If for any reason this code is
 not working, you can try to put these settings directly in =~/.ssh/config=:
 
-#+begin_SRC ssh
+#+BEGIN_SRC ssh
 Host *
 ControlMaster auto
 ControlPath ~/.ssh/master -%r@%h:%p
 ControlPersist = no
-#+end_SRC
+#+END_SRC
 
-** Why does =helm-M-x= (~SPC :~) not accept the prefix argument?
-If you try to run =helm-M-x= with the prefix argument (i.e. ~SPC u SPC :~) it
+** Why does =helm-M-x= (~SPC SPC~) not accept the prefix argument?
+If you try to run =helm-M-x= with the prefix argument (i.e. ~SPC u SPC SPC~) it
 will fail with this message:
 
-#+begin_verse
+#+BEGIN_VERSE
 Error: Specifying a prefix arg before calling helm-M-x
-#+end_verse
+#+END_VERSE
 
 Instead, call =helm-M-x= first, select the command you want to run, and press
-~C-u~ before pressing ~RETURN~. For instance: ~SPC : org-reload C-u RET~
+~C-u~ before pressing ~RETURN~. For instance: ~SPC SPC org-reload C-u RET~
 
 ** Why does my color theme not render correctly in terminal mode?
 In the terminal version of Emacs, color themes will not render correctly as
@@ -179,98 +182,99 @@ to the list and it will be installed when you reload your configuration with
 ~SPC f e R~, or at the next Spacemacs launch.
 
 ** Disable a package completely?
-To completely disable a package and effectively uninstalling it even if
-it is part of your used layers, look for the variable
-=dotspacemacs-excluded-packages= in your dotfile and add the package
-name to it:
+To completely disable a package and effectively uninstalling it even if it is
+part of your used layers, look for the variable =dotspacemacs-excluded-packages=
+in your dotfile and add the package name to it:
 
-#+begin_src emacs-lisp
-  (setq-default dotspacemacs-excluded-packages '(package1 package2 ...))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-excluded-packages '(package1 package2 ...))
+#+END_SRC
 
 ** Disable a package only for a specific major-mode?
-This is done by removing the hook added by Spacemacs. For example to
-remove =flycheck= support in python buffers, look for the function
+This is done by removing the hook added by Spacemacs. For example to remove
+=flycheck= support in python buffers, look for the function
 =dotspacemacs/user-config= in your dotfile and add the following code:
 
-#+begin_src emacs-lisp
-    (remove-hook 'python-mode-hook 'flycheck-mode)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(remove-hook 'python-mode-hook 'flycheck-mode)
+#+END_SRC
 
-*Hint* to know the name of the major-mode of the current buffer press:
-~SPC h d v major-mode RET~
+*Hint* to know the name of the major-mode of the current buffer press: ~SPC h d
+v major-mode RET~
 
 ** Disable company for a specific major-mode?
-It may be handy to disable =company= for a given mode if you plan on
-configuring =auto-complete= instead. One easy way to do it is to use the
-macro =spacemacs|disable-company= in the function =dotspacemacs/user-config=
-of your dotfile. The following snippet disables company for
-=python-mode=:
+It may be handy to disable =company= for a given mode if you plan on configuring
+=auto-complete= instead. One easy way to do it is to use the macro
+=spacemacs|disable-company= in the function =dotspacemacs/user-config= of your
+dotfile. The following snippet disables company for =python-mode=:
 
-#+begin_src emacs-lisp
-    (spacemacs|disable-company python-mode)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(spacemacs|disable-company python-mode)
+#+END_SRC
 
 ** Change special buffer rules?
 To change the way spacemacs marks buffers as useless, you can customize
-=spacemacs-useless-buffers-regexp= which marks buffers matching the
-regexp as useless. The variable =spacemacs-useful-buffers-regexp= marks
-buffers matching the regexp as useful buffers. Both can be customized
-the same way.
+=spacemacs-useless-buffers-regexp= which marks buffers matching the regexp as
+useless. The variable =spacemacs-useful-buffers-regexp= marks buffers matching
+the regexp as useful buffers. Both can be customized the same way.
 
 Examples:
-#+begin_src emacs-lisp
-    ;; Only mark helm buffers as useless
-    (setq spacemacs-useless-buffers-regexp '("\\*helm\.\+\\*"))
+#+BEGIN_SRC emacs-lisp
+;; Only mark helm buffers as useless
+(setq spacemacs-useless-buffers-regexp '("\\*helm\.\+\\*"))
 
-    ;; Marking the *Messages* buffer as useful
-    (push "\\*Messages\\*" spacemacs-useful-buffers-regexp)
-#+end_src
+;; Marking the *Messages* buffer as useful
+(push "\\*Messages\\*" spacemacs-useful-buffers-regexp)
+#+END_SRC
 
 ** Enable navigation by visual lines?
 Add the following snippet to your =dostpacemacs/config= function:
 
-#+begin_src emacs-lisp
-    ;; Make evil-mode up/down operate in screen lines instead of logical lines
-    (define-key evil-motion-state-map "j" 'evil-next-visual-line)
-    (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
-    ;; Also in visual mode
-    (define-key evil-visual-state-map "j" 'evil-next-visual-line)
-    (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+;; Make evil-mode up/down operate in screen lines instead of logical lines
+(define-key evil-motion-state-map "j" 'evil-next-visual-line)
+(define-key evil-motion-state-map "k" 'evil-previous-visual-line)
+;; Also in visual mode
+(define-key evil-visual-state-map "j" 'evil-next-visual-line)
+(define-key evil-visual-state-map "k" 'evil-previous-visual-line)
+#+END_SRC
 
 ** Disable evilification of a mode?
 You can ensure a mode opens in emacs state by using =evil-set-initial-state=.
 
-#+begin_src emacs-lisp
-  (evil-set-initial-state 'magit-status-mode 'emacs)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(evil-set-initial-state 'magit-status-mode 'emacs)
+#+END_SRC
 
 You can also do this using buffer name regular expressions. E.g. for magit,
 which has a number of different major modes, you can catch them all with
 
-#+begin_src emacs-lisp
-  (push '("*magit" . emacs) evil-buffer-regexps)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(push '("*magit" . emacs) evil-buffer-regexps)
+#+END_SRC
 
 This should make all original magit bindings work in the major modes in
 question. To enable the leader key in this case, you may have to define a
 binding in the mode's map, e.g. for =magit-status-mode=,
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'magit
-    (define-key magit-status-mode-map
-      (kbd dotspacemacs-leader-key) spacemacs-default-map))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'magit
+  (define-key magit-status-mode-map
+    (kbd dotspacemacs-leader-key) spacemacs-default-map))
+#+END_SRC
 
 ** Include underscores in word motions?
-You can modify the syntax table of the mode in question. For example, for Python
-mode:
+You can modify the syntax table of the mode in question. To do so you can
+include this on your =dotspacemacs/user-config=.
 
-#+begin_src emacs-lisp
-  (with-eval-after-load 'python
-    (modify-syntax-entry ?_ "w" python-mode-syntax-table))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+;; For python
+(add-hook 'python-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+;; For ruby
+(add-hook 'ruby-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+;; For Javascript
+(add-hook 'js2-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+#+END_SRC
 
 ** Setup =$PATH=?
 Some layers require certain tools to be available on your =$PATH=. This means
@@ -302,7 +306,7 @@ by calling =echo $PATH=. But you also should verify that =$PATH= is set properly
 in your environment. To do so call following command in your terminal.
 
 #+BEGIN_SRC sh
-$ env | grep "PATH"
+env | grep "PATH"
 #+END_SRC
 
 This is the value that will be used by Emacs. So it must contain =~/.local/bin=.
@@ -325,32 +329,32 @@ It is possible to change a leader key by binding its keymap to another sequence.
 For instance, if you want to switch ~SPC S~ (spelling) with ~SPC d~ (used by
 dash) to make the former easier to reach, you can use:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defun dear-leader/swap-keys (key1 key2)
   (let ((map1 (lookup-key spacemacs-default-map key1))
         (map2 (lookup-key spacemacs-default-map key2)))
     (spacemacs/set-leader-keys key1 map2 key2 map1)))
 (dear-leader/swap-keys "S" "d")
-#+end_src
+#+END_SRC
 
 If you want to define your own alias, like using ~SPC é~ (because it's a not
 used key on your keyboard-layout for instance) for accessing ~SPC w~ (windows
 management), you can use this:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defun dear-leader/alias-of (key1 key2)
   (let ((map (lookup-key spacemacs-default-map key2)))
     (spacemacs/set-leader-keys key1 map)))
 (dear-leader/alias-of "é" "w")
-#+end_src
+#+END_SRC
 
 ** Restore the sentence delimiter to two spaces?
 To restore the sentence delimiter to two spaces, add the following code to the
 =dotspacemacs/user-init= function of your =.spacemacs=:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (setq sentence-end-double-space t)
-#+end_src
+#+END_SRC
 
 ** Prevent the visual selection overriding my system clipboard?
 On some operating systems, there is only one clipboard for both *copied* and
@@ -360,19 +364,19 @@ clipboard, where normally goes the *copied* text. This can be corrected by
 adding the following code to the =dotspacemacs/user-config= of your
 =.spacemacs=:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (fset 'evil-visual-update-x-selection 'ignore)
-#+end_src
+#+END_SRC
 
 ** Make spell-checking support curly quotes (or any other character)?
 To have spell-checking support curly quotes (or any other character), you need
 to add a new entry to =ispell-local-dictionary-alist=, by adding for example the
 following code in the =dotspacemacs/user-config= of your =.spacemacs=:
 
-#+begin_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'ispell-local-dictionary-alist
   (quote ("my_english" "[[:alpha:]]" "[^[:alpha:]]" "['’]" t ("-d" "en_US") nil utf-8)))
-#+end_SRC
+#+END_SRC
 
 You can then add any regular expression you want in the fourth argument (i.e.
 add a symbol within =['’]=) to make it supported. Consult the help of
@@ -386,26 +390,68 @@ Spacemacs can be used as the =$EDITOR= (or =$GIT_EDITOR=) for editing git
 commits messages. To enable this you have to add the following line to your
 =dotspacemacs/user-config=:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (global-git-commit-mode t)
+#+END_SRC
+
+** Try Spacemacs without modifying my existing Emacs configuration?
+Emacs' ability to use any directory as the home for launching it allows us to
+try out Spacemacs (or any other Emacs configuration we desire) without having to
+go through the trouble of backing up our =~/.emacs.d= directory and then cloning
+the new configuration. This can be achieved easily using the following steps:
+
+#+BEGIN_SRC sh
+mkdir ~/spacemacs
+git clone git@github.com:syl20bnr/spacemacs.git ~/spacemacs/.emacs.d
+HOME=~/spacemacs emacs
+#+END_SRC
+
+If you're on Fish shell, you will need to modify the last command to:
+=env HOME=$HOME/spacemacs emacs=
+
+** Make copy/paste working with the mouse in X11 terminals?
+It is possible to disable the mouse support in X11 terminals in order to
+enable copying/pasting with the mouse. You need to add this line to your
+=dotspacemacs/user-config=:
+
+#+begin_src emacs-lisp
+(xterm-mouse-mode -1)
 #+end_src
+
+** Use =helm-ag= to search only in files of a certain type?
+It is possible to restrict the scope of =helm-ag= to search only expressions in
+some specified file types. There is two way of doing this, both by appending
+some expressions to the search input:
+
+- By using a regexp with =-G=, for instance =-G\.el$= will look for all files
+  ending with =.el= which are emacs-lisp files.
+
+- By using a flag like =--python= which should be self-explaining. The list of
+  available flags colud be accessed from terminal with:
+
+  #+begin_src shell
+  ag --list-file-types
+  #+end_src
+
+This is possible because =helm-ag= is treating the search input as command-line
+arguments of the =ag= program.
 
 * Windows
 ** Why do the fonts look crappy on Windows?
-You can install [[https://code.google.com/p/mactype/][MacType]] on Windows to get very nice looking fonts. It is
-also recommended to disable smooth scrolling on Windows.
+You can install [[https://code.google.com/p/mactype/][MacType]] on Windows to get very nice looking fonts. It is also
+recommended to disable smooth scrolling on Windows.
 
 ** Why is there no Spacemacs logo in the startup buffer?
-A GUI build of emacs supporting image display is required.
-You can follow the instructions [[http://stackoverflow.com/questions/2650041/emacs-under-windows-and-png-files][here]]. Alternatively you can download binaries
-of emacs with image support included such as [[http://emacsbinw64.sourceforge.net/][this one]].
+A GUI build of emacs supporting image display is required. You can follow the
+instructions [[http://stackoverflow.com/questions/2650041/emacs-under-windows-and-png-files][here]]. Alternatively you can download binaries of emacs with image
+support included such as [[http://emacsbinw64.sourceforge.net/][this one]].
 
 ** Why are all packages unavailable?
 Check if your Emacs has HTTPS capabilities by doing =M-:= and then:
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (gnutls-available-p)
-#+end_src
+#+END_SRC
 
 If this returns =nil=, you need to install the GnuTLS DDL file in the same
 directory as Emacs. See [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-gnutls.html#Help-For-Users][here]] for instructions.

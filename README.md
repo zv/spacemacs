@@ -38,6 +38,8 @@
         - [OS X](#os-x)
         - [Windows](#windows)
 - [Install](#install)
+    - [Default installation](#default-installation)
+    - [Installation alongside another configuration](#installation-alongside-another-configuration)
     - [Spacemacs logo](#spacemacs-logo)
 - [Update](#update)
     - [Automatic update](#automatic-update)
@@ -121,6 +123,10 @@ You should install the "emacs" package, not the "xemacs" package.
 XEmacs is an old fork of Emacs. The X in its name is unrelated to X11.
 Both Emacs and XEmacs have graphical support.
 
+**Note:** Ubuntu LTS 12.04 and 14.04 repositories have only Emacs 24.3
+available. You are advised to [build from source](https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Emacs.html) Emacs 24.4 or greater, as most packages require
+this version. The same may be true for other distributions as well.
+
 ### OS X
 
 We recommend the homebrew [emacs-mac-port][] formula:
@@ -173,6 +179,8 @@ For efficient searches we recommend to install `pt` ([the platinum searcher][]).
 
 # Install
 
+## Default installation
+
 1. If you have an existing Emacs configuration, back it up first:
 
    ```sh
@@ -212,6 +220,21 @@ For efficient searches we recommend to install `pt` ([the platinum searcher][]).
 If the mode-line turns red then be sure to visit the
 [troubleshooting][troubleshoot] guide and consult the [FAQ][FAQ.org].
 
+## Installation alongside another configuration
+
+To try out Spacemacs (or any other Emacs configuration you desire) without
+having to go through the trouble of backing up you `~/.emacs.d` directory and
+then cloning the new configuration:
+
+```sh
+mkdir ~/spacemacs
+git clone git@github.com:syl20bnr/spacemacs.git ~/spacemacs/.emacs.d
+HOME=~/spacemacs emacs
+```
+
+Note: If you're on Fish shell, you will need to modify the last command to: `env
+HOME=$HOME/spacemacs emacs`
+
 ## Spacemacs logo
 
 If you are using Ubuntu and Unity then you can add the Spacemacs logo by
@@ -245,7 +268,7 @@ Click on the arrow to update Spacemacs to the last version.
 
 ```sh
 git fetch
-git reset --hard <tag version which you are updating to> 
+git reset --hard <tag version which you are updating to>
 ```
 
 ## On develop branch

@@ -7,6 +7,7 @@ eproject.lst
 \#*
 .places
 .cache
+/eww-bookmarks
 eshell/history
 .emacs.desktop
 .emacs.desktop.lock
@@ -33,6 +34,7 @@ tmp/
 /history
 .python-environments/
 server/
+/network-security.data
 *~
 *.elc
 *.pyc
