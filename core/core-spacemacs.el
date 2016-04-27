@@ -64,7 +64,7 @@
   (setq-default evil-want-C-u-scroll t
                 ;; `evil-want-C-i-jump' is set to nil to avoid `TAB' being
                 ;; overlapped in terminal mode. The GUI specific `<C-i>' is used
-                ;; instead (defined in the init of `evil-jumper' package).
+                ;; instead.
                 evil-want-C-i-jump nil)
   (dotspacemacs/load-file)
   (require 'core-configuration-layer)
@@ -290,9 +290,5 @@ with the message pre-filled with template and information."
     ;; HACK: Needed because the first `#' is not encoded
     (setq url (replace-regexp-in-string "#" "%23" url))
     (browse-url url)))
-
-(when (and (display-graphic-p)
-           (string-equal "04/01/16" (format-time-string "%D")))
-  (require 'zemacs))
 
 (provide 'core-spacemacs)
