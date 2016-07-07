@@ -1731,7 +1731,7 @@ Open junk file using helm, with `prefix-arg' search in junk files"
     (progn
       (spacemacs|do-after-display-system-init
        (setq-default powerline-default-separator
-                     (if (display-graphic-p) 'wave 'utf-8)))
+                     (if (display-graphic-p) nil 'utf-8)))
       (defun spacemacs//set-powerline-for-startup-buffers ()
         "Set the powerline for buffers created when Emacs starts."
         (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
