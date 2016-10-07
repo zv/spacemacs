@@ -35,13 +35,15 @@ tmp/
 .python-environments/
 server/
 /network-security.data
-*~
 *.elc
 *.pyc
 /*.zip
 *.db
 python-*-docs-html
 /.cask/
+/session.*
+/srecode-map.el
+/recentf
 
 # Private directory
 private/
@@ -49,6 +51,3 @@ private/
 !private/snippets/README.md
 !private/local/README.md
 /games/
-srecode-map.el
-erc/
-layers/zv/local
