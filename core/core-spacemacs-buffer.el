@@ -81,7 +81,7 @@ version the release note it displayed")
   :abbrev-table nil
   (page-break-lines-mode)
   (setq buffer-read-only t
-        truncate-lines t)
+        truncate-lines nil)
   ;; needed to make tab work correctly in terminal
   (evil-define-key 'motion spacemacs-buffer-mode-map
     (kbd "C-i") 'widget-forward)
